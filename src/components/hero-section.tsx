@@ -14,12 +14,12 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
           {/* Text Content */}
           <div className="lg:pr-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              From Words to Growth:{' '}
-              <span className="text-blue-600">Content That Drives Authority & Revenue</span>
+              Turn Your Crypto Expertise Into{' '}
+              <span className="text-blue-600">Authority & Capital</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              MacLabs helps crypto, SaaS, and tech brands cut through the noise with human-first SEO content, 
-              founder ghostwriting, and automated content systems that scale.
+              MacLabs helps Web3 founders, DeFi platforms, and crypto infrastructure tools build trust, 
+              attract investors, and scale through strategic ghostwriting and crypto marketing.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 

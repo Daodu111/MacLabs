@@ -1,11 +1,37 @@
+import { ImageWithFallback } from './figma/ImageWithFallback'
+
 export function TrustedBySection() {
   const trustedCompanies = [
-    { name: 'TechCorp', logo: '🚀' },
-    { name: 'GrowthCo', logo: '📈' },
-    { name: 'InnovateHub', logo: '💡' },
-    { name: 'ScaleUp', logo: '⚡' },
-    { name: 'FutureGen', logo: '🌟' },
-    { name: 'NextLevel', logo: '🎯' }
+    { 
+      name: 'Coin Telegraph', 
+      logo: '/src/media/Coin Telegraph.jpg',
+      alt: 'Coin Telegraph logo'
+    },
+    { 
+      name: 'Yahoo Finance', 
+      logo: '/src/media/yahoo_finance_logo.jpg',
+      alt: 'Yahoo Finance logo'
+    },
+    { 
+      name: 'The Block', 
+      logo: '/src/media/theblockcrypto_logo.jpg',
+      alt: 'The Block logo'
+    },
+    { 
+      name: 'Cryptonews', 
+      logo: '/src/media/cryptonewscom_logo.jpg',
+      alt: 'Cryptonews logo'
+    },
+    { 
+      name: 'Zypto', 
+      logo: '/src/media/zypto_logo.jpg',
+      alt: 'Zypto logo'
+    },
+    { 
+      name: 'Rain', 
+      logo: '/src/media/rainfinancial_logo.jpg',
+      alt: 'Rain Financial logo'
+    }
   ]
 
   return (
@@ -14,7 +40,7 @@ export function TrustedBySection() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Trusted By</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Join hundreds of companies that have transformed their digital presence with our expertise
+            Featured in leading financial and crypto publications worldwide
           </p>
         </div>
 
@@ -24,10 +50,14 @@ export function TrustedBySection() {
               key={index}
               className="flex flex-col items-center justify-center p-6 rounded-lg hover:shadow-md transition-shadow duration-300 group"
             >
-              <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                {company.logo}
+              <div className="w-16 h-10 mb-4 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+                <ImageWithFallback
+                  src={company.logo}
+                  alt={company.alt}
+                  className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                />
               </div>
-              <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
+              <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors text-center">
                 {company.name}
               </span>
             </div>
@@ -36,7 +66,7 @@ export function TrustedBySection() {
 
         <div className="mt-12 text-center">
           <p className="text-sm text-gray-500">
-            Don't see your brand here? Let's start building your success story together.
+            Recognized by industry leaders for our expertise in digital marketing and crypto communications.
           </p>
         </div>
       </div>

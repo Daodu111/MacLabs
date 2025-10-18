@@ -7,7 +7,7 @@ import { HowWeWorkSection } from '../components/how-we-work-section'
 import { BookingSection } from '../components/booking-section'
 
 interface HomePageProps {
-  onPageChange: (page: string) => void
+  onPageChange: (page: string, postId?: string) => void
 }
 
 export function HomePage({ onPageChange }: HomePageProps) {

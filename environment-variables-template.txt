@@ -1,0 +1,43 @@
+# MacLabs Contact Form Environment Variables Template
+# Copy this file and update with your actual values
+
+# REQUIRED - Your email address for notifications
+ADMIN_EMAIL=your-email@example.com
+
+# OPTIONAL - Google Sheets Integration
+# Get this URL after deploying your Google Apps Script
+GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
+
+# OPTIONAL - Discord Notifications
+# Create a webhook in your Discord server
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_URL
+
+# OPTIONAL - Slack Notifications
+# Create an incoming webhook in your Slack workspace
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+
+# OPTIONAL - Zapier Integration
+# Create a webhook trigger in Zapier
+ZAPIER_WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/YOUR_WEBHOOK_ID/
+
+# OPTIONAL - Email Service Integration
+# Choose one of the following email services:
+
+# Option 1: Resend (Recommended)
+EMAIL_WEBHOOK_URL=https://api.resend.com/emails
+RESEND_API_KEY=your-resend-api-key
+
+# Option 2: SendGrid
+# EMAIL_WEBHOOK_URL=https://api.sendgrid.com/v3/mail/send
+# SENDGRID_API_KEY=your-sendgrid-api-key
+
+# Option 3: Mailgun
+# EMAIL_WEBHOOK_URL=https://api.mailgun.net/v3/YOUR_DOMAIN/messages
+# MAILGUN_API_KEY=your-mailgun-api-key
+
+# OPTIONAL - Make.com (formerly Integromat)
+MAKE_WEBHOOK_URL=https://hook.make.com/YOUR_WEBHOOK_ID
+
+# OPTIONAL - Custom email webhook service
+# If you have your own email service endpoint
+# EMAIL_WEBHOOK_URL=https://your-custom-email-service.com/send

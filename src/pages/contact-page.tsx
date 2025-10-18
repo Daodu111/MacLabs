@@ -112,12 +112,12 @@ export function ContactPage() {
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Let's Start Your{' '}
-            <span className="text-blue-600">Digital Transformation</span>
+            Let's Scale Your{' '}
+            <span className="text-blue-600">Crypto Project</span>
           </h1>
           <p className="text-xl text-gray-600 leading-relaxed mb-8">
-            Ready to take your marketing to the next level? Get in touch with our team 
-            and let's discuss how we can help you achieve your goals.
+            Ready to build authority and attract investors? Get in touch with our crypto-native team 
+            and let's discuss how we can help you achieve your Web3 goals.
           </p>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-500">
             <span className="flex items-center">
@@ -126,7 +126,7 @@ export function ContactPage() {
             </span>
             <span className="flex items-center">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-              Custom Strategy
+              Custom Crypto Strategy
             </span>
             <span className="flex items-center">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>

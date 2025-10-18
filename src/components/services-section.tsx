@@ -5,32 +5,18 @@ import { ArrowRight, Search, PenTool, Target, Settings } from 'lucide-react'
 export function ServicesSection() {
   const services = [
     {
-      icon: <Search className="h-8 w-8 text-blue-600" />,
-      title: "SEO Content & Strategy",
-      description: "We don't just write blogs. We build topic clusters, internal linking maps, and long-tail SEO strategies that turn your blog into a traffic engine.",
-      image: "https://images.unsplash.com/photo-1630331528526-7d04c6eb463f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW50JTIwY3JlYXRpb24lMjB3b3Jrc3BhY2V8ZW58MXx8fHwxNzU3NzcwOTEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      features: ["Keyword research & clustering", "Content calendar & editorial strategy", "SEO-optimized blogs & landing pages"]
-    },
-    {
       icon: <PenTool className="h-8 w-8 text-green-600" />,
-      title: "Ghostwriting for Founders",
-      description: "High-ticket service. We turn your expertise into influence. From crypto CEOs to SaaS founders, we help you build authority with scroll-stopping social posts.",
+      title: "Ghostwriting for Crypto Founders",
+      description: "Turn your crypto expertise into influence. We help Web3 founders, executives, and influencers build authority through strategic LinkedIn content and educational email courses that attract investors and build trust.",
       image: "https://images.unsplash.com/photo-1656164631668-8673eab87b84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYSUyMG1hcmtldGluZyUyMHN0cmF0ZWd5fGVufDF8fHx8MTc1NzY3MDU0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      features: ["LinkedIn + Twitter growth posts", "Voice development & narrative positioning", "Repurposing frameworks"]
+      features: ["LinkedIn thought leadership posts", "Educational email courses (5-7 parts)", "Newsletter ghostwriting", "Voice development & positioning", "X/Twitter thread repurposing"]
     },
     {
-      icon: <Target className="h-8 w-8 text-purple-600" />,
-      title: "Copywriting & Funnels",
-      description: "Great content brings traffic. Copy turns it into sales. We create landing pages, email sequences, and ad copy that captures, nurtures, and converts leads.",
+      icon: <Target className="h-8 w-8 text-blue-600" />,
+      title: "Crypto Marketing & Funnels",
+      description: "Specialized marketing for pre-sale projects and ICOs. We create compelling promotional content, landing pages, and investor education funnels that convert cold leads into warm believers ready to invest.",
       image: "https://images.unsplash.com/photo-1586996387347-6533bac25f14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMGxhcHRvcCUyMG1hcmtldGluZ3xlbnwxfHx8fDE3NTc3NzA5MTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      features: ["Landing pages that convert", "Email sequences", "Ad copy for LinkedIn, Twitter, Meta"]
-    },
-    {
-      icon: <Settings className="h-8 w-8 text-orange-600" />,
-      title: "Content Ops & Automation",
-      description: "Your competitive edge → scale without chaos. We set up systems so content gets produced, published, and tracked seamlessly.",
-      image: "https://images.unsplash.com/photo-1630331528526-7d04c6eb463f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW50JTIwY3JlYXRpb24lMjB3b3Jrc3BhY2V8ZW58MXx8fHwxNzU3NzcwOTEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      features: ["Notion content hubs", "Automated workflows", "CRM + email automation"]
+      features: ["Pre-sale & ICO promotional content", "High-converting landing pages", "Investor education funnels", "Email sequences for lead nurturing", "Analytics & funnel optimization"]
     }
   ]
 
@@ -38,10 +24,10 @@ export function ServicesSection() {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">What We Do</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Core Services</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Forget the generic "social marketing" and "email campaigns." We build end-to-end content systems 
-            that turn your expertise into authority, traffic into leads, and leads into revenue.
+            We specialize in two high-impact services for crypto and Web3 brands: strategic ghostwriting 
+            for founders raising capital, and crypto marketing for pre-sale and ICO projects.
           </p>
         </div>
 

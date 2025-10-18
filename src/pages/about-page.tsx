@@ -1,56 +1,57 @@
+import React from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
 import { Award, Users, TrendingUp, Heart } from 'lucide-react'
 
 interface AboutPageProps {
-  onPageChange: (page: string) => void
+  onPageChange: (page: string, postId?: string) => void
 }
 
 export function AboutPage({ onPageChange }: AboutPageProps) {
   const teamMembers = [
     {
-      name: "Sarah Mitchell",
-      position: "Founder & CEO",
+      name: "Sam Daodu",
+      position: "Founder & Crypto Marketing Strategist",
       image: "https://images.unsplash.com/photo-1586996387347-6533bac25f14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMGxhcHRvcCUyMG1hcmtldGluZ3xlbnwxfHx8fDE3NTc3NzA5MTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      bio: "10+ years in digital marketing with expertise in scaling startups to $10M+ revenue."
+      bio: "Crypto native with deep experience in Web3 marketing, trading, and investment. Specialized in helping crypto founders build authority and attract capital."
     },
     {
-      name: "David Chen",
-      position: "Head of Strategy",
+      name: "Alex Chen",
+      position: "Head of Crypto Content Strategy",
       image: "https://images.unsplash.com/photo-1698047682129-c3e217ac08b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHRlYW0lMjBtZWV0aW5nJTIwbW9kZXJuJTIwb2ZmaWNlfGVufDF8fHx8MTc1Nzc3MDkxMnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      bio: "Former Google executive specializing in data-driven marketing strategies and growth optimization."
+      bio: "Former DeFi protocol marketing lead specializing in investor education and compliance-aware messaging for crypto projects."
     },
     {
-      name: "Emily Rodriguez",
-      position: "Creative Director",
+      name: "Maya Rodriguez",
+      position: "Senior Ghostwriter & LinkedIn Strategist",
       image: "https://images.unsplash.com/photo-1686061594225-3e92c0cd51b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwbWFya2V0aW5nJTIwYW5hbHl0aWNzJTIwZGFzaGJvYXJkfGVufDF8fHx8MTc1Nzc3MDkxM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      bio: "Award-winning creative with 8+ years creating campaigns that blend artistry with performance."
+      bio: "Expert in founder positioning and thought leadership content. Helps crypto executives build authority through strategic LinkedIn presence."
     }
   ]
 
   const principles = [
     {
       icon: <Award className="h-8 w-8 text-blue-600" />,
-      title: "Excellence",
-      description: "We never settle for 'good enough'. Every campaign, every strategy, every piece of content is crafted to exceed expectations and deliver exceptional results."
+      title: "Crypto Native Understanding",
+      description: "We don't just write about crypto—we live it. Our team trades, invests, and understands both the technical and business sides of Web3 projects."
     },
     {
       icon: <Users className="h-8 w-8 text-green-600" />,
-      title: "Accountability", 
-      description: "We take full ownership of your success. When you win, we win. Our transparent reporting and regular check-ins ensure you're always in the loop."
+      title: "Direct Client Relationships", 
+      description: "We work directly with crypto projects, not as outsourced writers for agencies. This means better alignment, deeper understanding, and more substantial results."
     },
     {
       icon: <TrendingUp className="h-8 w-8 text-purple-600" />,
-      title: "Innovation",
-      description: "The digital landscape evolves rapidly, and so do we. We constantly test new strategies, tools, and approaches to keep you ahead of the competition."
+      title: "Proven Track Record",
+      description: "From freelancer to agency, we've walked the path of building credibility and scaling in the crypto space. We understand your journey and challenges."
     }
   ]
 
   const stats = [
-    { number: "500+", label: "Clients Served" },
-    { number: "300%", label: "Average ROI Increase" },
-    { number: "5+", label: "Years Experience" },
-    { number: "98%", label: "Client Retention" }
+    { number: "50+", label: "Crypto Projects Served" },
+    { number: "500%", label: "Average Engagement Increase" },
+    { number: "3+", label: "Years in Crypto" },
+    { number: "95%", label: "Client Success Rate" }
   ]
 
   return (
@@ -60,12 +61,12 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-gray-900 mb-6">
-              The dream team of{' '}
-              <span className="text-blue-600">digital marketing</span>
+              Meet the crypto native team behind{' '}
+              <span className="text-blue-600">MacLabs</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              We're passionate marketers, creative thinkers, and growth hackers who believe 
-              that great marketing should be both beautiful and measurably effective.
+              We're not just marketers—we're crypto enthusiasts, traders, and builders who understand 
+              the unique challenges of the Web3 space and what it takes to succeed.
             </p>
           </div>
 
@@ -99,18 +100,17 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                We are an agency that experts more than 5 years
+                From crypto trader to trusted marketing partner
               </h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Founded in 2019, MacLabs began with a simple mission: to help businesses 
-                cut through the digital noise and connect authentically with their audiences. 
-                What started as a two-person team has grown into a full-service digital 
-                marketing agency trusted by over 500 companies worldwide.
+                MacLabs was founded by Sam Daodu, a crypto native who understands both sides of the equation. 
+                As someone who trades, invests, and has worked with numerous crypto projects, Sam recognized 
+                the gap between generic marketing agencies and what crypto founders actually need.
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Our approach combines creative storytelling with data-driven strategies, 
-                ensuring every campaign not only looks great but delivers measurable 
-                results that drive real business growth.
+                Our approach combines deep crypto market knowledge with proven marketing strategies. 
+                We specialize in Web3 gaming, GambleFi, DeFi platforms, and crypto infrastructure tools—
+                helping founders build authority, attract qualified investors, and scale their projects.
               </p>
               
               {/* Stats */}
@@ -157,7 +157,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
 
             <div>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                The fundamental principles guiding our agency
+                What makes us different in the crypto space
               </h2>
               
               <div className="space-y-8">
@@ -186,14 +186,14 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                   <span className="font-medium text-gray-900">Want to see more?</span>
                 </div>
                 <p className="text-sm text-gray-600 mb-4">
-                  Click here to see our founder's portfolio and learn more about our journey.
+                  Check out our blog for insights, strategies, and success stories from our journey.
                 </p>
                 <Button 
                   variant="outline"
-                  onClick={() => onPageChange('services')}
+                  onClick={() => onPageChange('blog')}
                   className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                 >
-                  View Our Services
+                  Read Our Blog
                 </Button>
               </div>
             </div>

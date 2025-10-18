@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
@@ -7,6 +7,7 @@ import { Calendar, Clock, User, Mail, Phone, MessageSquare } from 'lucide-react'
 export function BookingSection() {
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,28 +22,37 @@ export function BookingSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
     
     try {
-      const { projectId, publicAnonKey } = await import('../utils/supabase/info')
+      // Format the date and time for Calendly URL
+      const formattedDate = selectedDate
+      const formattedTime = convertTo24Hour(selectedTime)
       
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a0d72807/booking`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`
-        },
-        body: JSON.stringify({
-          ...formData,
-          selectedDate,
-          selectedTime
-        })
-      })
-
-      const result = await response.json()
+      // Create Calendly scheduling URL with prefilled data
+      const calendlyUrl = new URL('https://calendly.com/your-username/30min') // Replace with your actual Calendly URL
       
-      if (result.success) {
-        alert(`Strategy call booked successfully for ${result.scheduledFor}! We'll send you a confirmation email shortly.`)
-        // Reset form
+      // Add prefill parameters
+      calendlyUrl.searchParams.append('name', formData.name)
+      calendlyUrl.searchParams.append('email', formData.email)
+      if (formData.phone) calendlyUrl.searchParams.append('phone', formData.phone)
+      
+      // Add custom questions as URL parameters (if your Calendly event supports them)
+      if (formData.company) calendlyUrl.searchParams.append('a1', formData.company) // Company
+      if (formData.message) calendlyUrl.searchParams.append('a2', formData.message) // Goals/Message
+      
+      // Preferred date/time (Calendly will try to show this date/time if available)
+      calendlyUrl.searchParams.append('date', formattedDate)
+      calendlyUrl.searchParams.append('time', formattedTime)
+      
+      // Open Calendly in a new window/tab
+      const calendlyWindow = window.open(calendlyUrl.toString(), '_blank', 'width=800,height=700,scrollbars=yes,resizable=yes')
+      
+      if (calendlyWindow) {
+        // Show success message
+        alert(`Redirecting to Calendly to complete your booking for ${selectedDate} at ${selectedTime}. Your information has been pre-filled!`)
+        
+        // Optional: Reset form after successful redirect
         setSelectedDate('')
         setSelectedTime('')
         setFormData({
@@ -53,12 +63,29 @@ export function BookingSection() {
           message: ''
         })
       } else {
-        throw new Error(result.error || 'Failed to book strategy call')
+        // Fallback if popup was blocked
+        window.location.href = calendlyUrl.toString()
       }
+      
     } catch (error) {
       console.error('Booking error:', error)
-      alert('There was an error booking your strategy call. Please try again or contact us directly.')
+      alert('There was an error processing your booking request. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  // Helper function to convert 12-hour to 24-hour format
+  const convertTo24Hour = (time12h: string) => {
+    const [time, modifier] = time12h.split(' ')
+    let [hours, minutes] = time.split(':')
+    if (hours === '12') {
+      hours = '00'
+    }
+    if (modifier === 'PM') {
+      hours = (parseInt(hours, 10) + 12).toString()
+    }
+    return `${hours}:${minutes}`
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -211,13 +238,13 @@ export function BookingSection() {
                   type="submit"
                   size="lg"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4"
-                  disabled={!selectedDate || !selectedTime || !formData.name || !formData.email}
+                  disabled={!selectedDate || !selectedTime || !formData.name || !formData.email || isLoading}
                 >
                   <MessageSquare className="h-5 w-5 mr-2" />
-                  Book Strategy Call
+                  {isLoading ? 'Booking...' : 'Book Strategy Call'}
                 </Button>
                 <p className="text-sm text-gray-500 mt-4">
-                  Free consultation • No commitment required • Get actionable insights
+                  Free consultation • No commitment required • Powered by Calendly
                 </p>
               </div>
             </form>

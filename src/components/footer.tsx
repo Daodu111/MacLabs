@@ -1,7 +1,7 @@
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
 
 interface FooterProps {
-  onPageChange: (page: string) => void
+  onPageChange: (page: string, postId?: string) => void
 }
 
 export function Footer({ onPageChange }: FooterProps) {
@@ -11,7 +11,7 @@ export function Footer({ onPageChange }: FooterProps) {
     company: [
       { name: 'About Us', id: 'about' },
       { name: 'Services', id: 'services' },
-      { name: 'Founder', id: 'founder' },
+      { name: 'Blog', id: 'blog' },
       { name: 'Contact', id: 'contact' }
     ],
     services: [
@@ -21,10 +21,10 @@ export function Footer({ onPageChange }: FooterProps) {
       { name: 'SEO Optimization', id: 'seo' }
     ],
     resources: [
-      { name: 'Blog', id: 'blog' },
       { name: 'Case Studies', id: 'case-studies' },
       { name: 'Whitepapers', id: 'whitepapers' },
-      { name: 'Webinars', id: 'webinars' }
+      { name: 'Webinars', id: 'webinars' },
+      { name: 'Free Tools', id: 'tools' }
     ]
   }
 
@@ -46,8 +46,8 @@ export function Footer({ onPageChange }: FooterProps) {
               <div className="mb-6">
                 <h3 className="text-2xl font-bold mb-4">MacLabs</h3>
                 <p className="text-gray-400 leading-relaxed">
-                  Transforming businesses through strategic digital marketing 
-                  that delivers measurable results and sustainable growth.
+                  Empowering crypto founders to build authority, attract investors, and scale their Web3 projects 
+                  through strategic ghostwriting and crypto-native marketing.
                 </p>
               </div>
               
@@ -151,6 +151,13 @@ export function Footer({ onPageChange }: FooterProps) {
               </button>
               <button className="hover:text-white transition-colors">
                 Cookie Policy
+              </button>
+              <button 
+                onClick={() => onPageChange('admin')}
+                className="hover:text-white transition-colors opacity-50 hover:opacity-100"
+                title="Admin Panel"
+              >
+                Admin
               </button>
             </div>
           </div>

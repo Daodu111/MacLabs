@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react'
 
 interface NavigationProps {
   currentPage: string
-  onPageChange: (page: string) => void
+  onPageChange: (page: string, postId?: string) => void
 }
 
 export function Navigation({ currentPage, onPageChange }: NavigationProps) {
@@ -14,7 +14,7 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
     { name: 'Home', id: 'home' },
     { name: 'About', id: 'about' },
     { name: 'Services', id: 'services' },
-    { name: 'Founder', id: 'founder' },
+    { name: 'Blog', id: 'blog' },
     { name: 'Contact', id: 'contact' }
   ]
 

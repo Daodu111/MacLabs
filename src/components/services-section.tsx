@@ -9,7 +9,7 @@ export function ServicesSection() {
       title: "Ghostwriting for Crypto Founders",
       description: "Turn your crypto expertise into influence. We help Web3 founders, executives, and influencers build authority through strategic LinkedIn content and educational email courses that attract investors and build trust.",
       image: "https://images.unsplash.com/photo-1656164631668-8673eab87b84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYSUyMG1hcmtldGluZyUyMHN0cmF0ZWd5fGVufDF8fHx8MTc1NzY3MDU0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      features: ["LinkedIn thought leadership posts", "Educational email courses (5-7 parts)", "Newsletter ghostwriting", "Voice development & positioning", "X/Twitter thread repurposing"]
+      features: ["LinkedIn thought leadership posts", "Educational email courses", "Newsletter ghostwriting", "Voice development & positioning", "X/Twitter thread repurposing"]
     },
     {
       icon: <Target className="h-8 w-8 text-blue-600" />,

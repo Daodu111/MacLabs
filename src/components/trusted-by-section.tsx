@@ -4,32 +4,32 @@ export function TrustedBySection() {
   const trustedCompanies = [
     { 
       name: 'Coin Telegraph', 
-      logo: '/src/media/Coin Telegraph.jpg',
+      logo: '/media/Coin Telegraph.jpg',
       alt: 'Coin Telegraph logo'
     },
     { 
       name: 'Yahoo Finance', 
-      logo: '/src/media/yahoo_finance_logo.jpg',
+      logo: '/media/yahoo_finance_logo.jpg',
       alt: 'Yahoo Finance logo'
     },
     { 
       name: 'The Block', 
-      logo: '/src/media/theblockcrypto_logo.jpg',
+      logo: '/media/theblockcrypto_logo.jpg',
       alt: 'The Block logo'
     },
     { 
       name: 'Cryptonews', 
-      logo: '/src/media/cryptonewscom_logo.jpg',
+      logo: '/media/cryptonewscom_logo.jpg',
       alt: 'Cryptonews logo'
     },
     { 
       name: 'Zypto', 
-      logo: '/src/media/zypto_logo.jpg',
+      logo: '/media/zypto_logo.jpg',
       alt: 'Zypto logo'
     },
     { 
       name: 'Rain', 
-      logo: '/src/media/rainfinancial_logo.jpg',
+      logo: '/media/rainfinancial_logo.jpg',
       alt: 'Rain Financial logo'
     }
   ]

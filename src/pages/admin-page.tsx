@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
 import { ArrowLeft, Plus, Edit, Trash2, Eye, Save, X, Upload, Calendar, User, Clock, Tag, Image as ImageIcon, Trash, Bold, Italic, Underline, List, ListOrdered, Link, Quote, Type, AlignLeft, AlignCenter, AlignRight, Star, Search } from 'lucide-react'
+import { blogService } from '../services/blogService'
 
 interface AdminPageProps {
   onPageChange: (page: string, postId?: string) => void
@@ -60,71 +61,25 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     published: true
   })
 
-  // Load blog posts from localStorage on component mount
+  // Load blog posts from Firestore on component mount
   useEffect(() => {
-    const savedPosts = localStorage.getItem('maclabs-blog-posts')
-    if (savedPosts) {
-      const posts = JSON.parse(savedPosts)
-      setBlogPosts(posts)
-      setFilteredPosts(posts)
-    } else {
-      // Initialize with default posts if none exist
-      const defaultPosts: BlogPost[] = [
-        {
-          id: "1",
-          title: "The Future of Digital Marketing: AI-Powered Strategies That Actually Work",
-          excerpt: "Discover how artificial intelligence is revolutionizing digital marketing and learn practical strategies you can implement today to stay ahead of the competition.",
-          content: `<p>In today's rapidly evolving digital landscape, artificial intelligence isn't just a buzzword—it's becoming the backbone of successful marketing strategies. As we move deeper into 2024, businesses that embrace AI-powered marketing are seeing unprecedented results, while those that don't risk being left behind.</p>
-
-<h2>The AI Revolution in Marketing</h2>
-<p>The integration of AI in digital marketing has transformed how we understand, reach, and engage with customers. From predictive analytics to personalized content creation, AI is enabling marketers to work smarter, not harder.</p>
-
-<p>Consider this: companies using AI for marketing are seeing an average increase of 37% in lead generation and a 52% improvement in conversion rates. These aren't just statistics—they represent real businesses achieving real growth through strategic AI implementation.</p>
-
-<h3>Key Areas Where AI is Making an Impact</h3>
-<ul>
-<li><strong>Predictive Analytics:</strong> Understanding customer behavior before it happens</li>
-<li><strong>Content Personalization:</strong> Delivering the right message to the right person at the right time</li>
-<li><strong>Automated Customer Service:</strong> 24/7 support that actually helps</li>
-<li><strong>Dynamic Pricing:</strong> Optimizing prices in real-time based on demand and competition</li>
-</ul>
-
-<h2>Getting Started: Your AI Marketing Action Plan</h2>
-<p>Ready to embrace AI in your marketing strategy? Here's your step-by-step action plan:</p>
-
-<ol>
-<li><strong>Audit Your Current Tools:</strong> Many platforms you're already using likely have AI features you haven't enabled</li>
-<li><strong>Start Small:</strong> Pick one area (like email marketing) and implement AI features there first</li>
-<li><strong>Measure Everything:</strong> Track the impact of AI implementations on your key metrics</li>
-<li><strong>Scale Gradually:</strong> Once you see success in one area, expand to others</li>
-<li><strong>Stay Educated:</strong> AI is evolving rapidly—make sure your team stays up-to-date</li>
-</ol>`,
-          author: "Alex MacLeod",
-          date: "2024-09-28",
-          readTime: "8 min read",
-          category: "Digital Strategy",
-          image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBSSUyMGRpZ2l0YWwlMjBtYXJrZXRpbmd8ZW58MXx8fHwxNzU3NzQ0NTUwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-          tags: ["AI", "Digital Marketing", "Strategy", "Innovation"],
-          views: 1247,
-          likes: 89,
-          comments: 23,
-          shares: 45,
-          featured: true,
-          published: true
-        }
-      ]
-      setBlogPosts(defaultPosts)
-      setFilteredPosts(defaultPosts)
-      localStorage.setItem('maclabs-blog-posts', JSON.stringify(defaultPosts))
+    const loadPosts = async () => {
+      try {
+        const posts = await blogService.getAllPosts()
+        setBlogPosts(posts)
+        setFilteredPosts(posts)
+      } catch (error) {
+        console.error('Error loading posts:', error)
+        // If Firestore fails, show empty state
+        setBlogPosts([])
+        setFilteredPosts([])
+      }
     }
+    
+    loadPosts()
   }, [])
 
-  // Save blog posts to localStorage whenever blogPosts changes
-  useEffect(() => {
-    if (blogPosts.length > 0) {
-      localStorage.setItem('maclabs-blog-posts', JSON.stringify(blogPosts))
-    }
-  }, [blogPosts])
+  // Note: Posts are now saved directly to Firestore, no localStorage needed
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -171,49 +126,76 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     setFormData(post)
   }
 
-  const handleDeletePost = (postId: string) => {
+  const handleDeletePost = async (postId: string) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
-      setBlogPosts(posts => posts.filter(post => post.id !== postId))
+      try {
+        const success = await blogService.deletePost(postId)
+        if (success) {
+          setBlogPosts(posts => posts.filter(post => post.id !== postId))
+          setFilteredPosts(posts => posts.filter(post => post.id !== postId))
+          alert('Post deleted successfully!')
+        } else {
+          alert('Error deleting post. Please try again.')
+        }
+      } catch (error) {
+        console.error('Error deleting post:', error)
+        alert('Error deleting post. Please try again.')
+      }
     }
   }
 
-  const handleSavePost = () => {
+  const handleSavePost = async () => {
     if (!formData.title || !formData.content) {
       alert('Please fill in at least the title and content')
       return
     }
 
-    const now = new Date()
-    const postData: BlogPost = {
-      id: editingPost?.id || Date.now().toString(),
-      title: formData.title || '',
-      excerpt: formData.excerpt || '',
-      content: formData.content || '',
-      author: formData.author || 'Alex MacLeod',
-      authorBio: formData.authorBio || '',
-      authorImage: formData.authorImage || '',
-      date: editingPost?.date || now.toISOString().split('T')[0],
-      readTime: formData.readTime || calculateReadTime(formData.content || ''),
-      category: formData.category || 'Digital Strategy',
-      image: formData.image || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibG9nJTIwcG9zdHxlbnwxfHx8fDE3NTc3NDQ1NTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-      tags: formData.tags || [],
-      views: editingPost?.views || 0,
-      likes: editingPost?.likes || 0,
-      comments: editingPost?.comments || 0,
-      shares: editingPost?.shares || 0,
-      featured: formData.featured || false,
-      published: formData.published !== undefined ? formData.published : true
-    }
+    try {
+      const now = new Date()
+      const postData = {
+        title: formData.title || '',
+        excerpt: formData.excerpt || '',
+        content: formData.content || '',
+        author: formData.author || 'Alex MacLeod',
+        authorBio: formData.authorBio || '',
+        authorImage: formData.authorImage || '',
+        date: editingPost?.date || now.toISOString().split('T')[0],
+        readTime: formData.readTime || calculateReadTime(formData.content || ''),
+        category: formData.category || 'Digital Strategy',
+        image: formData.image && formData.image.startsWith('http') ? formData.image : 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibG9nJTIwcG9zdHxlbnwxfHx8fDE3NTc3NDQ1NTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        tags: formData.tags || [],
+        views: editingPost?.views || 0,
+        likes: editingPost?.likes || 0,
+        comments: editingPost?.comments || 0,
+        shares: editingPost?.shares || 0,
+        featured: formData.featured || false,
+        published: formData.published !== undefined ? formData.published : true
+      }
 
-    if (editingPost) {
-      setBlogPosts(posts => posts.map(post => post.id === editingPost.id ? postData : post))
-    } else {
-      setBlogPosts(posts => [postData, ...posts])
-    }
+      if (editingPost) {
+        // Update existing post
+        const updatedPost = await blogService.updatePost(editingPost.id, postData)
+        if (updatedPost) {
+          setBlogPosts(posts => posts.map(post => post.id === editingPost.id ? updatedPost : post))
+          setFilteredPosts(posts => posts.map(post => post.id === editingPost.id ? updatedPost : post))
+        }
+      } else {
+        // Create new post
+        const newPost = await blogService.createPost(postData)
+        if (newPost) {
+          setBlogPosts(posts => [newPost, ...posts])
+          setFilteredPosts(posts => [newPost, ...posts])
+        }
+      }
 
-    setIsCreating(false)
-    setEditingPost(null)
-    setUploadedImage(null)
+      setIsCreating(false)
+      setEditingPost(null)
+      setUploadedImage(null)
+      alert('Post saved successfully!')
+    } catch (error) {
+      console.error('Error saving post:', error)
+      alert('Error saving post. Please try again.')
+    }
   }
 
   const calculateReadTime = (content: string): string => {
@@ -252,24 +234,23 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      alert('Image size must be less than 5MB')
+    if (file.size > 1 * 1024 * 1024) { // 1MB limit for Firestore
+      alert('Image size must be less than 1MB for Firestore compatibility')
       return
     }
 
     setIsUploading(true)
     
     try {
-      // Convert to base64 for demo purposes
-      // In production, you'd upload to a cloud service like AWS S3, Cloudinary, etc.
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const result = e.target?.result as string
-        setUploadedImage(result)
-        setFormData(prev => ({ ...prev, image: result }))
-        setIsUploading(false)
-      }
-      reader.readAsDataURL(file)
+      // For now, just use a default image URL to avoid Firestore size limits
+      // In production, you'd upload to Firebase Storage or another service
+      const defaultImageUrl = 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibG9nJTIwcG9zdHxlbnwxfHx8fDE3NTc3NDQ1NTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
+      
+      setUploadedImage(defaultImageUrl)
+      setFormData(prev => ({ ...prev, image: defaultImageUrl }))
+      setIsUploading(false)
+      
+      alert('Image uploaded successfully! (Using default image for Firestore compatibility)')
     } catch (error) {
       console.error('Error uploading image:', error)
       alert('Error uploading image. Please try again.')
@@ -386,6 +367,32 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
       // Move cursor to end of heading
       const newRange = document.createRange()
       newRange.setStartAfter(heading)
+      newRange.collapse(true)
+      selection.removeAllRanges()
+      selection.addRange(newRange)
+      
+      // Update content
+      setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+    }
+  }
+
+  const insertParagraph = () => {
+    if (!editorRef.current) return
+
+    const selection = window.getSelection()
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0)
+      const paragraph = document.createElement('p')
+      const textContent = selection.toString() || 'New paragraph'
+      
+      // Clear selection and insert paragraph
+      range.deleteContents()
+      paragraph.textContent = textContent
+      range.insertNode(paragraph)
+      
+      // Move cursor to end of paragraph
+      const newRange = document.createRange()
+      newRange.setStartAfter(paragraph)
       newRange.collapse(true)
       selection.removeAllRanges()
       selection.addRange(newRange)
@@ -892,6 +899,14 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                           title="Heading 3"
                         >
                           H3
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => insertParagraph()}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700 text-sm font-bold"
+                          title="Paragraph"
+                        >
+                          P
                         </button>
                       </div>
 

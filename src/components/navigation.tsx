@@ -46,8 +46,29 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
             </div>
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* CTA Button & Admin Link */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Button 
+              onClick={() => onPageChange('firebase-test')}
+              variant="outline"
+              className="text-sm"
+            >
+              Test Firebase
+            </Button>
+            <Button 
+              onClick={() => onPageChange('debug-blog')}
+              variant="outline"
+              className="text-sm"
+            >
+              Debug Blog
+            </Button>
+            <Button 
+              onClick={() => onPageChange('admin-dashboard')}
+              variant="outline"
+              className="text-sm"
+            >
+              Admin
+            </Button>
             <Button 
               onClick={() => onPageChange('contact')}
               className="bg-blue-600 hover:bg-blue-700 text-white"

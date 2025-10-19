@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Blog posts - public read for published posts, authenticated write
+    match /blog_posts/{postId} {
+      allow read: if resource.data.published == true;
+      allow write: if request.auth != null;
+    }
+    
+    // Categories - public read, authenticated write
+    match /blog_categories/{categoryId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Analytics - write for tracking, read for authenticated users
+    match /blog_analytics/{analyticsId} {
+      allow create: if true; // Allow anonymous analytics tracking
+      allow read: if request.auth != null; // Only authenticated users can read analytics
+    }
+    
+    // Admin users collection (optional - for role-based access)
+    match /admin_users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

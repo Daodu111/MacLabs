@@ -7,7 +7,10 @@ import { ServicesPage } from './pages/services-page'
 import { BlogPage } from './pages/blog-page'
 import { BlogPostPage } from './pages/blog-post-page'
 import { AdminPage } from './pages/admin-page'
+import { AdminDashboard } from './pages/admin-dashboard'
 import { ContactPage } from './pages/contact-page'
+import { FirebaseTest } from './components/firebase-test'
+import { DebugBlogData } from './components/debug-blog-data'
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -46,8 +49,14 @@ export default function App() {
         return <BlogPostPage onPageChange={handlePageChange} postId={currentPostId || undefined} />
       case 'admin':
         return <AdminPage onPageChange={handlePageChange} />
+      case 'admin-dashboard':
+        return <AdminDashboard onPageChange={handlePageChange} />
       case 'contact':
         return <ContactPage />
+      case 'firebase-test':
+        return <FirebaseTest />
+      case 'debug-blog':
+        return <DebugBlogData />
       default:
         return <HomePage onPageChange={handlePageChange} />
     }

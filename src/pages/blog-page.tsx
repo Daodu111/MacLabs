@@ -16,20 +16,37 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
-    // Load blog posts from service
-    const posts = blogService.getPublishedPosts()
-    setBlogPosts(posts)
+    const loadBlogData = async () => {
+      try {
+        console.log('🔄 Loading blog data...')
+        // Load blog posts from service
+        const posts = await blogService.getPublishedPosts()
+        console.log('📊 Published posts loaded:', posts.length)
+        setBlogPosts(posts)
 
-    // Get featured post
-    const featured = blogService.getFeaturedPosts()[0]
-    setFeaturedPost(featured)
+        // Get featured post
+        const featured = await blogService.getFeaturedPosts()
+        console.log('⭐ Featured posts loaded:', featured.length)
+        setFeaturedPost(featured[0] || null)
 
-    // Get categories
-    const cats = blogService.getCategories().map(cat => ({
-      ...cat,
-      active: cat.name === 'All Posts'
-    }))
-    setCategories(cats)
+        // Get categories
+        const cats = await blogService.getCategories()
+        console.log('📂 Categories loaded:', cats.length)
+        setCategories(cats.map(cat => ({
+          ...cat,
+          active: cat.name === 'All Posts'
+        })))
+      } catch (error) {
+        console.error('Error loading blog data:', error)
+      }
+    }
+
+    loadBlogData()
+    
+    // Add a refresh mechanism - reload data every 30 seconds
+    const interval = setInterval(loadBlogData, 30000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   // Filter posts by category and search query
@@ -285,6 +302,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
           </div>
         </div>
       </section>
+
 
       {/* Newsletter Signup */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700">

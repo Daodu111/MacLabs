@@ -18,22 +18,30 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
   const [relatedPosts, setRelatedPosts] = useState<any[]>([])
 
   useEffect(() => {
-    if (postId) {
-      // Get the blog post
-      const post = blogService.getPostById(postId)
-      if (post) {
-        setBlogPost(post)
-        // Increment view count
-        blogService.incrementViews(postId)
-        // Get related posts
-        const related = blogService.getRelatedPosts(postId, 3)
-        setRelatedPosts(related)
-        
-        // Check if post is bookmarked
-        const bookmarkedPosts = JSON.parse(localStorage.getItem('bookmarkedPosts') || '[]')
-        setIsBookmarked(bookmarkedPosts.includes(postId))
+    const loadPostData = async () => {
+      if (postId) {
+        try {
+          // Get the blog post
+          const post = await blogService.getPostById(postId)
+          if (post) {
+            setBlogPost(post)
+            // Increment view count
+            await blogService.incrementViews(postId)
+            // Get related posts
+            const related = await blogService.getRelatedPosts(postId, 3)
+            setRelatedPosts(related)
+            
+            // Check if post is bookmarked
+            const bookmarkedPosts = JSON.parse(localStorage.getItem('bookmarkedPosts') || '[]')
+            setIsBookmarked(bookmarkedPosts.includes(postId))
+          }
+        } catch (error) {
+          console.error('Error loading post data:', error)
+        }
       }
     }
+
+    loadPostData()
   }, [postId])
 
   // Close share dropdown when clicking outside
@@ -119,9 +127,13 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
     }
   }
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (!isLiked) {
-      blogService.incrementLikes(blogPost.id)
+      try {
+        await blogService.incrementLikes(blogPost.id)
+      } catch (error) {
+        console.error('Error incrementing likes:', error)
+      }
     }
     setIsLiked(!isLiked)
   }
@@ -336,7 +348,7 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
               </div>
               <div>
                 <p className="text-gray-600 leading-relaxed">
-                  {blogPost.authorBio || 'Crypto enthusiast and blockchain expert with over 5 years of experience in the Web3 space. Passionate about making decentralized technology accessible to everyone.'}
+                  {blogPost.authorBio || 'Author bio not available.'}
                 </p>
               </div>
             </div>

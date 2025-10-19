@@ -14,8 +14,8 @@ export function WhyChooseSection() {
     },
     {
       icon: <TrendingUp className="h-12 w-12 text-purple-600" />,
-      title: "Proven Freelancer-to-Agency Journey",
-      description: "We've walked the path from writing for agencies to building direct relationships with projects. We understand your journey and the challenges you face."
+      title: "Thought Leadership Positioning",
+      description: "We transform crypto founders into recognized thought leaders by building their authority on X (Twitter) and LinkedIn. Our strategic content positions you as an expert who investors trust and follow."
     },
     {
       icon: <Cog className="h-12 w-12 text-orange-600" />,

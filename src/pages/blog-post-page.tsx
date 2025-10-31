@@ -16,6 +16,8 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [blogPost, setBlogPost] = useState<any>(null)
   const [relatedPosts, setRelatedPosts] = useState<any[]>([])
+  const [likeCount, setLikeCount] = useState(0)
+  // comments removed
 
   useEffect(() => {
     const loadPostData = async () => {
@@ -43,6 +45,18 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
 
     loadPostData()
   }, [postId])
+
+  // Load saved likes
+  useEffect(() => {
+    if (postId) {
+      // Load saved likes
+      const savedLikes = JSON.parse(localStorage.getItem('likedPosts') || '[]')
+      setIsLiked(savedLikes.includes(postId))
+      
+      // Initialize like count from blog post data
+      setLikeCount(blogPost?.likes || 0)
+    }
+  }, [postId, blogPost])
 
   // Close share dropdown when clicking outside
   useEffect(() => {
@@ -131,11 +145,28 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
     if (!isLiked) {
       try {
         await blogService.incrementLikes(blogPost.id)
+        setLikeCount(prev => prev + 1)
       } catch (error) {
         console.error('Error incrementing likes:', error)
       }
+    } else {
+      try {
+        await blogService.decrementLikes(blogPost.id)
+        setLikeCount(prev => Math.max(0, prev - 1))
+      } catch (error) {
+        console.error('Error decrementing likes:', error)
+      }
     }
     setIsLiked(!isLiked)
+    
+    // Save to localStorage for UI state
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]')
+    if (isLiked) {
+      const updatedLikes = likedPosts.filter((id: string) => id !== postId)
+      localStorage.setItem('likedPosts', JSON.stringify(updatedLikes))
+    } else {
+      localStorage.setItem('likedPosts', JSON.stringify([...likedPosts, postId]))
+    }
   }
 
   const handleBookmark = () => {
@@ -155,6 +186,8 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
     
     setIsBookmarked(!isBookmarked)
   }
+
+  // comments removed
 
   return (
     <div className="pt-16">
@@ -236,6 +269,26 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-4 mb-8 pt-12 pb-6">
+            {/* Like Button */}
+            <button 
+              onClick={handleLike}
+              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                isLiked 
+                  ? 'border-red-500 bg-red-500 text-white' 
+                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <Heart 
+                className="h-4 w-4"
+                style={{
+                  fill: isLiked ? 'currentColor' : 'none',
+                  stroke: isLiked ? 'currentColor' : '#ef4444',
+                  strokeWidth: 2
+                }}
+              />
+              {isLiked ? 'Liked' : 'Like'} ({likeCount})
+            </button>
+
             {/* Share Button with Dropdown */}
             <div className="relative share-dropdown-container">
               <button 
@@ -353,6 +406,8 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
               </div>
             </div>
           </div>
+
+          {/* comments removed */}
         </div>
       </article>
 

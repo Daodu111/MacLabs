@@ -58,10 +58,21 @@ export interface BlogCategory {
   createdAt: Timestamp
 }
 
+export interface BlogComment {
+  id: string
+  postId: string
+  author: string
+  content: string
+  isAnonymous: boolean
+  createdAt: Timestamp
+  updatedAt?: Timestamp
+}
+
 class BlogService {
   private postsCollection = collection(db, 'blog_posts')
   private categoriesCollection = collection(db, 'blog_categories')
   private analyticsCollection = collection(db, 'blog_analytics')
+  private commentsCollection = collection(db, 'blog_comments')
 
   // Get all blog posts
   async getAllPosts(): Promise<BlogPost[]> {
@@ -284,6 +295,89 @@ class BlogService {
       await this.logAnalytics(postId, 'share')
     } catch (error) {
       console.error('Error incrementing shares:', error)
+    }
+  }
+
+  // Decrement likes (for unlike functionality)
+  async decrementLikes(postId: string): Promise<void> {
+    try {
+      const docRef = doc(this.postsCollection, postId)
+      await updateDoc(docRef, {
+        likes: increment(-1),
+        updatedAt: serverTimestamp()
+      })
+    } catch (error) {
+      console.error('Error decrementing likes:', error)
+    }
+  }
+
+  // Add comment to a post
+  async addComment(postId: string, commentData: {
+    author: string
+    content: string
+    isAnonymous?: boolean
+  }): Promise<BlogComment | null> {
+    try {
+      const docRef = await addDoc(this.commentsCollection, {
+        postId,
+        author: commentData.author,
+        content: commentData.content,
+        isAnonymous: commentData.isAnonymous || false,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      })
+
+      // Increment comment count on the post
+      await this.incrementComments(postId)
+
+      // Log analytics
+      await this.logAnalytics(postId, 'comment')
+
+      return {
+        id: docRef.id,
+        postId,
+        author: commentData.author,
+        content: commentData.content,
+        isAnonymous: commentData.isAnonymous || false,
+        createdAt: new Date() as any,
+        updatedAt: new Date() as any
+      } as BlogComment
+    } catch (error) {
+      console.error('Error adding comment:', error)
+      return null
+    }
+  }
+
+  // Get comments for a post
+  async getComments(postId: string): Promise<BlogComment[]> {
+    try {
+      const q = query(
+        this.commentsCollection,
+        where('postId', '==', postId),
+        orderBy('createdAt', 'asc')
+      )
+      const querySnapshot = await getDocs(q)
+      
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as BlogComment))
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+      return []
+    }
+  }
+
+  // Increment comment count
+  async incrementComments(postId: string): Promise<void> {
+    try {
+      const docRef = doc(this.postsCollection, postId)
+      await updateDoc(docRef, {
+        comments: increment(1),
+        updatedAt: serverTimestamp()
+      })
+    } catch (error) {
+      console.error('Error incrementing comments:', error)
     }
   }
 

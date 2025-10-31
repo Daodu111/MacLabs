@@ -19,8 +19,8 @@
  * 8. Copy the web app URL and use it in your integration
  */
 
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Replace with your Google Sheet ID
-const ADMIN_EMAIL = 'your-email@example.com'; // Replace with your email
+const SPREADSHEET_ID = '1nwS0FkVGjKemZNhs0c7poQH9lHrnC4RYpNpb8sb02UM'; // Replace with your Google Sheet ID
+const ADMIN_EMAIL = 'sam.daodu@maclabsmarketing.com'; // Replace with your email
 
 function doPost(e) {
   try {

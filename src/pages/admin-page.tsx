@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
-import { ArrowLeft, Plus, Edit, Trash2, Eye, Save, X, Upload, Calendar, User, Clock, Tag, Image as ImageIcon, Trash, Bold, Italic, Underline, List, ListOrdered, Link, Quote, Type, AlignLeft, AlignCenter, AlignRight, Star, Search } from 'lucide-react'
+import { ArrowLeft, Plus, Edit, Trash2, Eye, Save, X, Upload, Calendar, User, Clock, Tag, Image as ImageIcon, Trash, Bold, Italic, Underline, List, ListOrdered, Link, Quote, Type, AlignLeft, AlignCenter, AlignRight, AlignJustify, Star, Search, Minus, Plus as PlusIcon, RotateCcw, Table as TableIcon } from 'lucide-react'
 import { blogService } from '../services/blogService'
 
 interface AdminPageProps {
@@ -47,11 +47,12 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const authorImageInputRef = useRef<HTMLInputElement>(null)
   const editorRef = useRef<HTMLDivElement>(null)
+  const contentImageInputRef = useRef<HTMLInputElement>(null)
   const [formData, setFormData] = useState<Partial<BlogPost>>({
     title: '',
     excerpt: '',
     content: '',
-    author: 'Alex MacLeod',
+    author: 'Sam Daodu',
     authorBio: '',
     authorImage: '',
     category: 'Digital Strategy',
@@ -107,7 +108,7 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
       title: '',
       excerpt: '',
       content: '',
-      author: 'Alex MacLeod',
+      author: 'Sam Daodu',
       authorBio: '',
       authorImage: '',
       category: 'Digital Strategy',
@@ -156,7 +157,7 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
         title: formData.title || '',
         excerpt: formData.excerpt || '',
         content: formData.content || '',
-        author: formData.author || 'Alex MacLeod',
+        author: formData.author || 'Sam Daodu',
         authorBio: formData.authorBio || '',
         authorImage: formData.authorImage || '',
         date: editingPost?.date || now.toISOString().split('T')[0],
@@ -272,16 +273,18 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     e.preventDefault()
     setIsDragOver(false)
     
-    const files = Array.from(e.dataTransfer.files)
-    if (files.length > 0) {
-      handleFileUpload(files[0])
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      const file = files.item(0) as File
+      handleFileUpload(file)
     }
   }
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files && files.length > 0) {
-      handleFileUpload(files[0])
+      const file = files.item(0) as File
+      handleFileUpload(file)
     }
   }
 
@@ -356,23 +359,27 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     const selection = window.getSelection()
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0)
-      const heading = document.createElement(`h${level}`)
-      const textContent = selection.toString() || `Heading ${level}`
+      const selectedText = selection.toString()
       
-      // Clear selection and insert heading
-      range.deleteContents()
-      heading.textContent = textContent
-      range.insertNode(heading)
-      
-      // Move cursor to end of heading
-      const newRange = document.createRange()
-      newRange.setStartAfter(heading)
-      newRange.collapse(true)
-      selection.removeAllRanges()
-      selection.addRange(newRange)
-      
-      // Update content
-      setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+      // Only apply formatting if text is selected
+      if (selectedText) {
+        const heading = document.createElement(`h${level}`)
+        
+        // Clear selection and insert heading
+        range.deleteContents()
+        heading.textContent = selectedText
+        range.insertNode(heading)
+        
+        // Move cursor to end of heading
+        const newRange = document.createRange()
+        newRange.setStartAfter(heading)
+        newRange.collapse(true)
+        selection.removeAllRanges()
+        selection.addRange(newRange)
+        
+        // Update content
+        setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+      }
     }
   }
 
@@ -382,23 +389,57 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     const selection = window.getSelection()
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0)
-      const paragraph = document.createElement('p')
-      const textContent = selection.toString() || 'New paragraph'
+      const selectedText = selection.toString()
       
-      // Clear selection and insert paragraph
-      range.deleteContents()
-      paragraph.textContent = textContent
-      range.insertNode(paragraph)
+      // Only apply formatting if text is selected
+      if (selectedText) {
+        const paragraph = document.createElement('p')
+        
+        // Clear selection and insert paragraph
+        range.deleteContents()
+        paragraph.textContent = selectedText
+        range.insertNode(paragraph)
+        
+        // Move cursor to end of paragraph
+        const newRange = document.createRange()
+        newRange.setStartAfter(paragraph)
+        newRange.collapse(true)
+        selection.removeAllRanges()
+        selection.addRange(newRange)
+        
+        // Update content
+        setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+      }
+    }
+  }
+
+  const insertNormalText = () => {
+    if (!editorRef.current) return
+
+    const selection = window.getSelection()
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0)
+      const selectedText = selection.toString()
       
-      // Move cursor to end of paragraph
-      const newRange = document.createRange()
-      newRange.setStartAfter(paragraph)
-      newRange.collapse(true)
-      selection.removeAllRanges()
-      selection.addRange(newRange)
-      
-      // Update content
-      setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+      // Only apply formatting if text is selected
+      if (selectedText) {
+        // Create a text node to remove any formatting
+        const textNode = document.createTextNode(selectedText)
+        
+        // Clear selection and insert plain text
+        range.deleteContents()
+        range.insertNode(textNode)
+        
+        // Move cursor to end of text
+        const newRange = document.createRange()
+        newRange.setStartAfter(textNode)
+        newRange.collapse(true)
+        selection.removeAllRanges()
+        selection.addRange(newRange)
+        
+        // Update content
+        setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+      }
     }
   }
 
@@ -419,20 +460,49 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     const selection = window.getSelection()
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0)
+      
+      // Check if we're already inside a blockquote
+      let parent: Node | null = range.commonAncestorContainer
+      if (parent.nodeType === Node.TEXT_NODE) {
+        parent = parent.parentNode as Node | null
+      }
+      
+      let blockquoteParent: Node | null = parent
+      while (blockquoteParent && blockquoteParent !== editorRef.current) {
+        if (blockquoteParent.nodeName === 'BLOCKQUOTE') {
+          // Already inside a blockquote, don't create another one
+          return
+        }
+        blockquoteParent = blockquoteParent.parentNode as Node | null
+      }
+      
       const blockquote = document.createElement('blockquote')
-      const textContent = selection.toString() || 'Quote text here'
+      const textContent = selection.toString()
       
-      // Clear selection and insert blockquote
-      range.deleteContents()
-      blockquote.textContent = textContent
-      range.insertNode(blockquote)
-      
-      // Move cursor to end of blockquote
-      const newRange = document.createRange()
-      newRange.setStartAfter(blockquote)
-      newRange.collapse(true)
-      selection.removeAllRanges()
-      selection.addRange(newRange)
+      // Only insert blockquote if there's selected text
+      if (textContent) {
+        // Clear selection and insert blockquote
+        range.deleteContents()
+        blockquote.textContent = textContent
+        range.insertNode(blockquote)
+        
+        // Move cursor to end of blockquote and insert a normal paragraph
+        const newRange = document.createRange()
+        newRange.setStartAfter(blockquote)
+        newRange.collapse(true)
+        
+        // Insert a normal paragraph after the blockquote
+        const paragraph = document.createElement('p')
+        paragraph.innerHTML = '<br>'
+        newRange.insertNode(paragraph)
+        
+        // Move cursor to the new paragraph
+        const finalRange = document.createRange()
+        finalRange.setStart(paragraph, 0)
+        finalRange.collapse(true)
+        selection.removeAllRanges()
+        selection.addRange(finalRange)
+      }
       
       // Update content
       setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
@@ -442,6 +512,101 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
   const handleEditorChange = () => {
     if (editorRef.current) {
       setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+    }
+  }
+
+  const insertContentImageFromUrl = () => {
+    const url = prompt('Enter image URL:')
+    if (!url) return
+    executeCommand('insertImage', url)
+  }
+
+  const handleContentImageFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    const file = files.item(0) as File
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      executeCommand('insertImage', dataUrl)
+      if (contentImageInputRef.current) contentImageInputRef.current.value = ''
+    }
+    reader.readAsDataURL(file as Blob)
+  }
+
+  const insertTable = () => {
+    if (!editorRef.current) return
+    const rowsStr = prompt('Number of rows?', '3') || '3'
+    const colsStr = prompt('Number of columns?', '3') || '3'
+    const rows = Math.max(1, parseInt(rowsStr, 10) || 3)
+    const cols = Math.max(1, parseInt(colsStr, 10) || 3)
+    const table = document.createElement('table')
+    table.style.width = '100%'
+    table.style.borderCollapse = 'collapse'
+    for (let r = 0; r < rows; r++) {
+      const tr = document.createElement('tr')
+      for (let c = 0; c < cols; c++) {
+        const cell = r === 0 ? document.createElement('th') : document.createElement('td')
+        cell.textContent = r === 0 ? `Header ${c + 1}` : `Cell ${r}-${c + 1}`
+        cell.style.border = '1px solid #e5e7eb'
+        cell.style.padding = '12px'
+        tr.appendChild(cell)
+      }
+      table.appendChild(tr)
+    }
+    const selection = window.getSelection()
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0)
+      range.deleteContents()
+      range.insertNode(table)
+      setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+    }
+  }
+
+  const handleEditorKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      const selection = window.getSelection()
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0)
+        let parent: Node | null = range.commonAncestorContainer
+        
+        if (parent.nodeType === Node.TEXT_NODE) {
+          parent = parent.parentNode as Node | null
+        }
+        
+        // Check if we're inside a blockquote
+        let blockquoteParent: Node | null = parent
+        while (blockquoteParent && blockquoteParent !== editorRef.current) {
+          if (blockquoteParent.nodeName === 'BLOCKQUOTE') {
+            // Exit the blockquote by creating a normal paragraph after it
+            e.preventDefault()
+            
+            const newParagraph = document.createElement('p')
+            newParagraph.innerHTML = '<br>'
+            
+            // Insert paragraph after the blockquote
+            if (blockquoteParent.parentNode) {
+              blockquoteParent.parentNode.insertBefore(newParagraph, blockquoteParent.nextSibling)
+              
+              // Move cursor to the new paragraph
+              const newRange = document.createRange()
+              newRange.setStart(newParagraph, 0)
+              newRange.collapse(true)
+              selection.removeAllRanges()
+              selection.addRange(newRange)
+              
+              // Update content
+              setFormData(prev => ({ ...prev, content: editorRef.current?.innerHTML || '' }))
+            }
+            return
+          }
+          blockquoteParent = blockquoteParent.parentNode as Node | null
+        }
+      }
     }
   }
 
@@ -486,55 +651,49 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
-            <p className="text-gray-600">Access the blog management system</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Username
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
+      <div className="pt-16 min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="w-full" style={{ maxWidth: '380px' }}>
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
+              <p className="text-gray-600">Access the blog management system</p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
 
-            {loginError && (
-              <div className="text-red-600 text-sm text-center">{loginError}</div>
-            )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
 
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-              Login
-            </Button>
-          </form>
+              {loginError && (
+                <div className="text-red-600 text-sm text-center">{loginError}</div>
+              )}
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>Demo Credentials:</strong><br />
-              Username: admin<br />
-              Password: maclabs2024
-            </p>
+              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                Login
+              </Button>
+            </form>
           </div>
         </div>
       </div>
@@ -544,17 +703,17 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
   if (isCreating || editingPost) {
     return (
       <div className="pt-16 min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-4">
+          <div className="flex items-start justify-between mb-8">
+            <div className="flex flex-col gap-6">
               <button
                 onClick={() => {
                   setIsCreating(false)
                   setEditingPost(null)
                   setUploadedImage(null)
                 }}
-                className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+                className="flex items-center text-blue-600 hover:text-blue-700 transition-colors w-fit"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Posts
@@ -908,6 +1067,14 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                         >
                           P
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => insertNormalText()}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700 text-sm font-bold"
+                          title="Normal Text"
+                        >
+                          Normal
+                        </button>
                       </div>
 
                       {/* Lists */}
@@ -931,7 +1098,7 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                       </div>
 
                       {/* Links and Quotes */}
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 border-r border-gray-300 pr-2 mr-2">
                         <button
                           type="button"
                           onClick={insertLink}
@@ -948,6 +1115,121 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                         >
                           <Quote className="h-4 w-4" />
                         </button>
+                        <button
+                          type="button"
+                          onClick={insertTable}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Insert Table"
+                        >
+                          <TableIcon className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => contentImageInputRef.current?.click()}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Insert Image"
+                        >
+                          <ImageIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      {/* Text Alignment */}
+                      <div className="flex gap-1 border-r border-gray-300 pr-2 mr-2">
+                        <button
+                          type="button"
+                          onClick={() => executeCommand('justifyLeft')}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Align Left"
+                        >
+                          <AlignLeft className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => executeCommand('justifyCenter')}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Align Center"
+                        >
+                          <AlignCenter className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => executeCommand('justifyRight')}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Align Right"
+                        >
+                          <AlignRight className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => executeCommand('justifyFull')}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Justify"
+                        >
+                          <AlignJustify className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      {/* Font Options */}
+                      <div className="flex gap-1 border-r border-gray-300 pr-2 mr-2">
+                        <select
+                          onChange={(e) => executeCommand('fontName', e.target.value)}
+                          className="px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          title="Font Family"
+                        >
+                          <option value="">Font</option>
+                          <option value="Arial">Arial</option>
+                          <option value="Helvetica">Helvetica</option>
+                          <option value="Times New Roman">Times New Roman</option>
+                          <option value="Georgia">Georgia</option>
+                          <option value="Verdana">Verdana</option>
+                          <option value="Courier New">Courier New</option>
+                          <option value="Monaco">Monaco</option>
+                          <option value="Calibri">Calibri</option>
+                          <option value="Montserrat">Montserrat</option>
+                          <option value="Lato">Lato</option>
+                        </select>
+                        <select
+                          onChange={(e) => executeCommand('fontSize', e.target.value)}
+                          className="px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          title="Font Size"
+                        >
+                          <option value="">Size</option>
+                          <option value="1">8px</option>
+                          <option value="2">10px</option>
+                          <option value="3">12px</option>
+                          <option value="4">14px</option>
+                          <option value="5">18px</option>
+                          <option value="6">24px</option>
+                          <option value="7">36px</option>
+                        </select>
+                      </div>
+
+                      {/* Spacing Options */}
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => executeCommand('insertHorizontalRule')}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Insert Horizontal Line"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => executeCommand('insertParagraph')}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Insert Line Break"
+                        >
+                          <PlusIcon className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => executeCommand('removeFormat')}
+                          className="p-2 hover:bg-gray-200 rounded text-gray-700"
+                          title="Remove Formatting"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
 
@@ -956,9 +1238,17 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                       ref={editorRef}
                       contentEditable
                       onInput={handleEditorChange}
+                      onKeyDown={handleEditorKeyDown}
                       className="w-full min-h-96 px-3 py-2 border border-t-0 border-gray-300 rounded-b-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                       style={{ minHeight: '24rem' }}
                       suppressContentEditableWarning={true}
+                    />
+                    <input
+                      ref={contentImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleContentImageFileInput}
+                      className="hidden"
                     />
                 <p className="text-sm text-gray-500 mt-2">
                       Use the toolbar above to format your text. No HTML knowledge required!

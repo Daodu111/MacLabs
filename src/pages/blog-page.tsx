@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
-import { ArrowRight, Calendar, User, Clock, Tag, Star, Search, Filter } from 'lucide-react'
+import { ArrowRight, Calendar, User, Clock, Tag, Star, Search, Filter, Heart, Share2 } from 'lucide-react'
 import { blogService } from '../services/blogService'
 
 interface BlogPageProps {
@@ -14,6 +14,9 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
   const [categories, setCategories] = useState<any[]>([])
   const [selectedCategory, setSelectedCategory] = useState('All Posts')
   const [searchQuery, setSearchQuery] = useState('')
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set())
+  const [postLikes, setPostLikes] = useState<Record<string, number>>({})
+  // comments removed
 
   useEffect(() => {
     const loadBlogData = async () => {
@@ -23,6 +26,10 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
         const posts = await blogService.getPublishedPosts()
         console.log('📊 Published posts loaded:', posts.length)
         setBlogPosts(posts)
+        // initialize like counts from posts
+        const likesMap: Record<string, number> = {}
+        posts.forEach(p => { likesMap[p.id] = p.likes || 0 })
+        setPostLikes(likesMap)
 
         // Get featured post
         const featured = await blogService.getFeaturedPosts()
@@ -42,11 +49,21 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
     }
 
     loadBlogData()
-    
-    // Add a refresh mechanism - reload data every 30 seconds
-    const interval = setInterval(loadBlogData, 30000)
-    
-    return () => clearInterval(interval)
+    // Periodic auto-refresh disabled per request
+    return () => {}
+  }, [])
+
+  // Load saved likes from localStorage
+  useEffect(() => {
+    const savedLikes = localStorage.getItem('likedPosts')
+    if (savedLikes) {
+      try {
+        const likedArray = JSON.parse(savedLikes)
+        setLikedPosts(new Set(likedArray))
+      } catch (error) {
+        console.error('Error loading saved likes:', error)
+      }
+    }
   }, [])
 
   // Filter posts by category and search query
@@ -67,6 +84,70 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
       ...cat,
       active: cat.name === categoryName
     })))
+  }
+
+  // Like functionality
+  const handleLike = async (postId: string, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
+    
+    const isLiked = likedPosts.has(postId)
+    const currentLikes = postLikes[postId] || 0
+    
+    if (isLiked) {
+      // Unlike
+      setLikedPosts(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(postId)
+        return newSet
+      })
+      setPostLikes(prev => ({
+        ...prev,
+        [postId]: Math.max(0, currentLikes - 1)
+      }))
+      try { await blogService.decrementLikes(postId) } catch {}
+    } else {
+      // Like
+      setLikedPosts(prev => new Set(prev).add(postId))
+      setPostLikes(prev => ({
+        ...prev,
+        [postId]: currentLikes + 1
+      }))
+      try { await blogService.incrementLikes(postId) } catch {}
+    }
+    
+    // Update in localStorage for persistence
+    const likedPostsArray = Array.from(likedPosts)
+    if (isLiked) {
+      const updatedLikes = likedPostsArray.filter(id => id !== postId)
+      localStorage.setItem('likedPosts', JSON.stringify(updatedLikes))
+    } else {
+      localStorage.setItem('likedPosts', JSON.stringify([...likedPostsArray, postId]))
+    }
+  }
+
+  // comments removed
+
+  // Share functionality
+  const handleShare = (postId: string, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
+    
+    const post = blogPosts.find(p => p.id === postId)
+    if (!post) return
+
+    const shareUrl = `${window.location.origin}?post=${postId}`
+    const shareText = `Check out this article: ${post.title}`
+    
+    if (navigator.share) {
+      navigator.share({
+        title: post.title,
+        text: shareText,
+        url: shareUrl
+      })
+    } else {
+      // Fallback to clipboard
+      navigator.clipboard.writeText(shareUrl)
+      alert('Link copied to clipboard!')
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -279,6 +360,42 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                       {post.readTime}
                     </div>
                   </div>
+
+                  {/* Engagement Section */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      {/* Like Button */}
+                      <button
+                        onClick={(e) => handleLike(post.id, e)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm border transition-all duration-200 ${
+                          likedPosts.has(post.id)
+                            ? 'bg-red-500 border-red-500 text-white'
+                            : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                        }`}
+                      >
+                        <Heart
+                          className="h-4 w-4"
+                          style={{
+                            fill: likedPosts.has(post.id) ? 'currentColor' : 'none',
+                            stroke: likedPosts.has(post.id) ? 'currentColor' : '#ef4444',
+                            strokeWidth: 2
+                          }}
+                        />
+                        <span>{(postLikes[post.id] ?? post.likes ?? 0)}</span>
+                      </button>
+
+                      {/* Share Button */}
+                      <button
+                        onClick={(e) => handleShare(post.id, e)}
+                        className="flex items-center gap-1 px-3 py-2 rounded-full text-sm bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 transition-all duration-200"
+                      >
+                        <Share2 className="h-4 w-4" />
+                        <span>Share</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* comments removed */}
                   
                   <div className="w-full">
                     <div className="text-gray-900 font-medium text-sm px-4 py-3 rounded-md hover:bg-gray-100 transition-all duration-300 cursor-pointer text-center transform hover:scale-105">

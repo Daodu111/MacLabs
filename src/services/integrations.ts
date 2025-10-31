@@ -3,7 +3,7 @@
 
 export class GoogleSheetsService {
   private static SHEETS_API_URL = 'https://sheets.googleapis.com/v4/spreadsheets'
-  private static SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec' // Replace with your script ID
+  private static SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_Wg2EWYGw_R55MJL4HQFgZRxyGUCDuTF7FYBaYHrpex_IXRJcvYpsBEthJf1k-cJYXQ/exec'
 
   // Method 1: Using Google Apps Script Web App (Recommended for simplicity)
   static async sendToGoogleSheets(formData: any, type: 'contact' | 'booking') {

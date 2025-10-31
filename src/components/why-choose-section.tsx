@@ -1,4 +1,5 @@
 import { Target, Cog, Shield, TrendingUp } from 'lucide-react'
+import { Button } from './ui/button'
 
 export function WhyChooseSection() {
   const benefits = [
@@ -81,6 +82,13 @@ export function WhyChooseSection() {
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                 Crypto Native Team
               </span>
+            </div>
+            <div className="mt-8">
+              <a href="#booking">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8">
+                  Book A Strategy Call
+                </Button>
+              </a>
             </div>
           </div>
         </div>

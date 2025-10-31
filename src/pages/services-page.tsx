@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
 import { ArrowRight, Search, PenTool, Target, Settings, MessageCircle, Globe, Zap, BarChart3 } from 'lucide-react'
 
@@ -16,16 +17,16 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
       features: [
         "Funnel audit to identify leaks in your investor journey",
         "Compelling opt-in hook investors can't ignore",
-        "Educational email course (5-7 parts) turning cold leads into believers",
+        "Educational email course turning cold leads into believers",
         "Professional landing page setup for high conversions",
-        "LinkedIn ghostwriting (3-5 posts/week) for thought leadership",
-        "Newsletter ghostwriting (weekly/bi-weekly) for deeper relationships",
+        "LinkedIn ghostwriting for thought leadership",
+        "Newsletter ghostwriting for deeper relationships",
         "Repurposing system: LinkedIn posts into X/Twitter threads",
         "Monthly analytics & iteration reporting",
         "Founder positioning: voice, tone, and narrative development"
       ],
       deliverable: "Complete investor education funnel + consistent social presence that builds authority",
-      image: "https://images.unsplash.com/photo-1656164631668-8673eab87b84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYSUyMG1hcmtldGluZyUyMHN0cmF0ZWd5fGVufDF8fHx8MTc1NzY3MDU0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+      image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?q=80&w=1080&auto=format&fit=crop"
     },
     {
       icon: <Target className="h-12 w-12 text-blue-600" />,
@@ -41,7 +42,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
         "Compliance-aware messaging for regulated markets"
       ],
       deliverable: "Complete marketing campaign that drives qualified investor interest and participation",
-      image: "https://images.unsplash.com/photo-1630331528526-7d04c6eb463f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW50JTIwY3JlYXRpb24lMjB3b3Jrc3BhY2V8ZW58MXx8fHwxNzU3NzcwOTEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+      image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080&auto=format"
     }
   ]
 
@@ -186,6 +187,45 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
         </div>
       </section>
 
+      {/* Free Course Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-lg">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="text-sm font-semibold tracking-wide text-blue-600 uppercase mb-3">
+                  Free Course
+                </div>
+                <h3 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
+                  Increase Lead Conversion
+                  <br />
+                  in 5 Days
+                </h3>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  A FREE, 5-day email course breaking down the biggest digital marketing mistakes that
+                  cause lower win rates, deals slipping into the next quarter, and a thin pipeline.
+                </p>
+                <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-3 max-w-xl">
+                  <Input type="email" required placeholder="Email Address" className="h-12" />
+                  <Button type="submit" className="h-12 bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap px-6">
+                    Send Me Lesson #1
+                  </Button>
+                </form>
+              </div>
+              <div>
+                <div className="bg-gray-100 rounded-2xl p-6 lg:p-10 flex items-center justify-center shadow-inner">
+                  <img
+                    src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1200&auto=format&fit=crop"
+                    alt="Natural Capital Marketing Blueprint book mockup"
+                    className="w-full h-auto max-w-md rounded-xl shadow-md"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -196,21 +236,13 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
             Join Web3 founders and crypto projects who've already built trust and attracted investors with MacLabs. 
             Let's discuss your project and create a custom strategy.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Button 
               onClick={() => onPageChange('contact')}
               size="lg"
               className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3"
             >
               Get Custom Pricing
-            </Button>
-            <Button 
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3"
-              onClick={() => onPageChange('about')}
-            >
-              Meet the Team
             </Button>
           </div>
         </div>

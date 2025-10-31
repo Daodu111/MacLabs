@@ -16,13 +16,45 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState('home')
   const [currentPostId, setCurrentPostId] = useState<string | null>(null)
 
-  // Handle URL parameters for direct blog post links
+  // Handle URL routing on page load and URL changes
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const postId = urlParams.get('post')
-    if (postId) {
-      setCurrentPage('blog-post')
-      setCurrentPostId(postId)
+    const updatePageFromURL = () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const postId = urlParams.get('post')
+      
+      if (postId) {
+        setCurrentPage('blog-post')
+        setCurrentPostId(postId)
+        return
+      }
+
+      // Map URL paths to page names
+      const path = window.location.pathname.replace(/^\/+/, '') || 'home'
+      
+      const pathToPage: Record<string, string> = {
+        '': 'home',
+        'home': 'home',
+        'about': 'about',
+        'services': 'services',
+        'blog': 'blog',
+        'contact': 'contact',
+        'admin': 'admin',
+        'admin-dashboard': 'admin-dashboard'
+      }
+
+      const page = pathToPage[path] || 'home'
+      setCurrentPage(page)
+      setCurrentPostId(null)
+    }
+
+    // Initial load
+    updatePageFromURL()
+
+    // Listen for browser back/forward navigation
+    window.addEventListener('popstate', updatePageFromURL)
+    
+    return () => {
+      window.removeEventListener('popstate', updatePageFromURL)
     }
   }, [])
 
@@ -32,6 +64,25 @@ export default function App() {
       setCurrentPostId(postId)
     } else {
       setCurrentPostId(null)
+    }
+
+    // Update URL to match the page for proper browser navigation
+    const pageToPath: Record<string, string> = {
+      'home': '/',
+      'about': '/about',
+      'services': '/services',
+      'blog': '/blog',
+      'contact': '/contact',
+      'admin': '/admin',
+      'admin-dashboard': '/admin-dashboard'
+    }
+
+    if (page === 'blog-post' && postId) {
+      const params = new URLSearchParams({ post: postId })
+      window.history.pushState({}, '', `/?${params.toString()}`)
+    } else {
+      const path = pageToPath[page] || '/'
+      window.history.pushState({}, '', path)
     }
   }
 

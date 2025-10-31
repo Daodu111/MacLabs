@@ -8,14 +8,14 @@ export function ServicesSection() {
       icon: <PenTool className="h-8 w-8 text-green-600" />,
       title: "Ghostwriting for Crypto Founders",
       description: "Turn your crypto expertise into influence. We help Web3 founders, executives, and influencers build authority through strategic LinkedIn content and educational email courses that attract investors and build trust.",
-      image: "https://images.unsplash.com/photo-1656164631668-8673eab87b84?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYSUyMG1hcmtldGluZyUyMHN0cmF0ZWd5fGVufDF8fHx8MTc1NzY3MDU0NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1080&q=80",
       features: ["LinkedIn thought leadership posts", "Educational email courses", "Newsletter ghostwriting", "Voice development & positioning", "X/Twitter thread repurposing"]
     },
     {
       icon: <Target className="h-8 w-8 text-blue-600" />,
       title: "Crypto Marketing & Funnels",
       description: "Specialized marketing for pre-sale projects and ICOs. We create compelling promotional content, landing pages, and investor education funnels that convert cold leads into warm believers ready to invest.",
-      image: "https://images.unsplash.com/photo-1586996387347-6533bac25f14?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMGxhcHRvcCUyMG1hcmtldGluZ3xlbnwxfHx8fDE3NTc3NzA5MTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1080&q=80",
       features: ["Pre-sale & ICO promotional content", "High-converting landing pages", "Investor education funnels", "Email sequences for lead nurturing", "Analytics & funnel optimization"]
     }
   ]

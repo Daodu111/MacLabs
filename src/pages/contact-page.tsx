@@ -1,9 +1,14 @@
 import { useState } from 'react'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '../config/firebase'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Textarea } from '../components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
 import { Mail, Phone, MapPin, Clock, MessageSquare, Send } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog'
+import { Button as UIButton } from '../components/ui/button'
+import { GoogleSheetsService } from '../services/integrations'
 
 export function ContactPage() {
   const [formData, setFormData] = useState({
@@ -15,38 +20,36 @@ export function ContactPage() {
     budget: '',
     message: ''
   })
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     try {
-      const { projectId, publicAnonKey } = await import('../utils/supabase/info')
-      
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a0d72807/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`
-        },
-        body: JSON.stringify(formData)
+      // Save to Firestore 'contacts' collection
+      await addDoc(collection(db, 'contacts'), {
+        ...formData,
+        status: 'new',
+        createdAt: serverTimestamp(),
       })
 
-      const result = await response.json()
-      
-      if (result.success) {
-        alert('Thank you for your message! We\'ll get back to you within 24 hours.')
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          company: '',
-          service: '',
-          budget: '',
-          message: ''
-        })
-      } else {
-        throw new Error(result.error || 'Failed to submit contact form')
+      // Also notify via Google Apps Script Web App (uses Gmail; free tier)
+      try {
+        await GoogleSheetsService.sendToGoogleSheets(formData, 'contact')
+      } catch (gsError) {
+        console.warn('Google Apps Script notification skipped/failed (non-blocking):', gsError)
       }
+
+      setIsSuccessOpen(true)
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        service: '',
+        budget: '',
+        message: ''
+      })
     } catch (error) {
       console.error('Contact form error:', error)
       alert('There was an error submitting your message. Please try again or contact us directly.')
@@ -64,25 +67,19 @@ export function ContactPage() {
     {
       icon: <Mail className="h-6 w-6 text-blue-600" />,
       title: "Email Us",
-      content: "hello@maclabs.com",
+      content: "sam.daodu@maclabsmarketing.com",
       description: "We'll respond within 24 hours"
     },
     {
       icon: <Phone className="h-6 w-6 text-green-600" />,
       title: "Call Us",
-      content: "+44 (0)115 123 4567",
-      description: "Mon-Fri 9AM-6PM GMT"
-    },
-    {
-      icon: <MapPin className="h-6 w-6 text-purple-600" />,
-      title: "Visit Us",
-      content: "Nottingham, UK",
-      description: "Schedule an appointment"
+      content: "+447831692196",
+      description: "Mon - Sat, 9AM-6PM GMT"
     },
     {
       icon: <Clock className="h-6 w-6 text-orange-600" />,
       title: "Business Hours",
-      content: "Mon-Fri 9AM-6PM",
+      content: "Mon - Sat 9AM-6PM",
       description: "GMT (Greenwich Mean Time)"
     }
   ]
@@ -108,6 +105,22 @@ export function ContactPage() {
 
   return (
     <div className="pt-16">
+      {/* Success Modal */}
+      <Dialog open={isSuccessOpen} onOpenChange={setIsSuccessOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Message sent successfully</DialogTitle>
+            <DialogDescription>
+              Thank you for reaching out. We'll get back to you within 24 hours.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex justify-end">
+            <UIButton onClick={() => setIsSuccessOpen(false)} className="bg-blue-600 hover:bg-blue-700 text-white">
+              Close
+            </UIButton>
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

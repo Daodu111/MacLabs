@@ -1,13 +1,45 @@
 import React from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
-import { Award, Users, TrendingUp, Heart } from 'lucide-react'
+import { Award, Users, TrendingUp, Heart, Target, BookOpen, Megaphone, BarChart3, ShieldCheck } from 'lucide-react'
 
 interface AboutPageProps {
   onPageChange: (page: string, postId?: string) => void
 }
 
 export function AboutPage({ onPageChange }: AboutPageProps) {
+  const waysWeHelp = [
+    {
+      icon: <Target className="h-6 w-6 text-blue-600" />,
+      title: "Strategy & Positioning",
+      description: "Clarity on who you serve, why it matters, and how to win attention in crypto-native channels."
+    },
+    {
+      icon: <BookOpen className="h-6 w-6 text-green-600" />,
+      title: "Thought Leadership Content",
+      description: "Founder-led narratives, long-form explainers, and educational content that builds authority and trust."
+    },
+    {
+      icon: <Megaphone className="h-6 w-6 text-purple-600" />,
+      title: "Social & Distribution",
+      description: "Consistent distribution across LinkedIn, X, and communities to reach investors, partners, and users."
+    },
+    {
+      icon: <BarChart3 className="h-6 w-6 text-indigo-600" />,
+      title: "Investor-Focused Collateral",
+      description: "Clear pitch materials, product narratives, and simple visuals that communicate value and traction."
+    },
+    {
+      icon: <ShieldCheck className="h-6 w-6 text-emerald-600" />,
+      title: "Research & Insights",
+      description: "Market mapping, competitor scans, and messaging validation to inform smart go-to-market bets."
+    },
+    {
+      icon: <Target className="h-6 w-6 text-orange-600" />,
+      title: "Go-To-Market Execution",
+      description: "Campaign planning, content calendars, and consistent shipping that compounds reach over time."
+    }
+  ]
   const teamMembers = [
     {
       name: "Sam Daodu",
@@ -47,90 +79,31 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
     }
   ]
 
-  const stats = [
-    { number: "50+", label: "Crypto Projects Served" },
-    { number: "500%", label: "Average Engagement Increase" },
-    { number: "3+", label: "Years in Crypto" },
-    { number: "95%", label: "Client Success Rate" }
-  ]
+  
 
   return (
     <div className="pt-16">
-      {/* Hero Section */}
+      {/* 1. About Section */}
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold text-gray-900 mb-6">
-              Meet the crypto native team behind{' '}
-              <span className="text-blue-600">MacLabs</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              We're not just marketers—we're crypto enthusiasts, traders, and builders who understand 
-              the unique challenges of the Web3 space and what it takes to succeed.
-            </p>
-          </div>
-
-          {/* Team Cards */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {teamMembers.map((member, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-shadow duration-300 text-center"
-              >
-                <div className="relative mb-6">
-                  <ImageWithFallback
-                    src={member.image}
-                    alt={member.name}
-                    className="w-32 h-32 rounded-full mx-auto object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-600/20 to-transparent rounded-full"></div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                <p className="text-blue-600 font-medium mb-4">{member.position}</p>
-                <p className="text-gray-600 text-sm leading-relaxed">{member.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About Story Section */}
-      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                From crypto trader to trusted marketing partner
-              </h2>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                MacLabs was founded by Sam Daodu, a crypto native who understands both sides of the equation. 
-                As someone who trades, invests, and has worked with numerous crypto projects, Sam recognized 
-                the gap between generic marketing agencies and what crypto founders actually need.
+              <h1 className="text-5xl font-bold text-gray-900 mb-6">
+                About <span className="text-blue-600">MacLabs</span>
+              </h1>
+              <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                MacLabs helps crypto founders, product leaders, and investor-backed teams communicate with clarity, earn trust, and grow faster. We blend crypto-native understanding with practical marketing to turn complex products into simple, compelling stories.
               </p>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Our approach combines deep crypto market knowledge with proven marketing strategies. 
-                We specialize in Web3 gaming, GambleFi, DeFi platforms, and crypto infrastructure tools—
-                helping founders build authority, attract qualified investors, and scale their projects.
+              <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                Born from hands-on experience in trading, investing, and working with Web3 teams, we operate where rigor meets creativity—helping you stand out in a crowded, fast-moving market.
               </p>
-              
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                {stats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-3xl font-bold text-blue-600 mb-2">{stat.number}</div>
-                    <div className="text-sm text-gray-600">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-
               <Button 
                 onClick={() => onPageChange('contact')}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
               >
-                Start Your Journey
+                Work With Us
               </Button>
             </div>
-
             <div className="relative">
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1622675363311-3e1904dc1885?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXZlcnNlJTIwdGVhbSUyMHByb2Zlc3Npb25hbHMlMjBtZWV0aW5nfGVufDF8fHx8MTc1Nzc3MTA3NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
@@ -143,60 +116,105 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
         </div>
       </section>
 
-      {/* Principles Section */}
+      {/* 2. Our Mission */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Mission</h2>
+            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              We make crypto products understandable and investable. Whether you are shipping infrastructure, DeFi, or consumer apps, our mission is to translate technical depth into clear stories that attract users, partners, and capital.
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              We believe in accuracy, transparency, and practical execution—pairing strong narratives with distribution that actually moves the needle.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Ways We Help */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1736939661350-dec5c2bd5cd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB3b21hbiUyMHByZXNlbnRlciUyMGxhcHRvcHxlbnwxfHx8fDE3NTc3NzEwNzV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-                alt="Team principles"
-                className="w-full h-96 object-cover rounded-2xl shadow-2xl"
-              />
-            </div>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Ways We Help</h2>
+            <p className="text-gray-700 max-w-2xl mx-auto">
+              Practical support across messaging, content, and distribution—designed for crypto founders and teams.
+            </p>
+          </div>
 
-            <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                What makes us different in the crypto space
-              </h2>
-              
-              <div className="space-y-8">
-                {principles.map((principle, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 mr-4">
-                      <div className="w-12 h-12 bg-white rounded-lg shadow-md flex items-center justify-center">
-                        {principle.icon}
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">
-                        {principle.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {principle.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 p-6 bg-blue-50 rounded-lg">
-                <div className="flex items-center mb-3">
-                  <Heart className="h-5 w-5 text-red-500 mr-2" />
-                  <span className="font-medium text-gray-900">Want to see more?</span>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {waysWeHelp.map((item, index) => (
+              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
+                  {item.icon}
                 </div>
-                <p className="text-sm text-gray-600 mb-4">
-                  Check out our blog for insights, strategies, and success stories from our journey.
-                </p>
-                <Button 
-                  variant="outline"
-                  onClick={() => onPageChange('blog')}
-                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                >
-                  Read Our Blog
-                </Button>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Team & Values */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">Values We Live By</h2>
+            <div className="space-y-6 mx-auto">
+                <div className="flex items-start">
+                  <div className="w-12 h-12 bg-blue-50 rounded-lg shadow-sm flex items-center justify-center mr-4">
+                    <Award className="h-7 w-7 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">Collaborative and Supportive</h3>
+                    <p className="text-gray-600">We win as a team—combining diverse viewpoints to deliver better outcomes, faster.</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-12 h-12 bg-green-50 rounded-lg shadow-sm flex items-center justify-center mr-4">
+                    <TrendingUp className="h-7 w-7 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">Driven by Passion</h3>
+                    <p className="text-gray-600">Crypto-native curiosity fuels our work—from research to content to distribution.</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-12 h-12 bg-purple-50 rounded-lg shadow-sm flex items-center justify-center mr-4">
+                    <Users className="h-7 w-7 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">Committed to Growth</h3>
+                    <p className="text-gray-600">We iterate openly, learn fast, and prioritize what creates real compounding value.</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="w-12 h-12 bg-rose-50 rounded-lg shadow-sm flex items-center justify-center mr-4">
+                    <Heart className="h-7 w-7 text-rose-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">Open and Constructive</h3>
+                    <p className="text-gray-600">We communicate with clarity, give direct feedback, and operate with transparency.</p>
+                  </div>
+                </div>
+
+                <div className="mt-8 p-6 bg-blue-50 rounded-lg">
+                  <div className="flex items-center mb-3">
+                    <Heart className="h-5 w-5 text-red-500 mr-2" />
+                    <span className="font-medium text-gray-900">Explore insights and case-style writeups</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Visit our blog for frameworks, founder playbooks, and lessons from the field.
+                  </p>
+                  <Button 
+                    variant="outline"
+                    onClick={() => onPageChange('blog')}
+                    className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                  >
+                    Read Our Blog
+                  </Button>
+                </div>
+              </div>
           </div>
         </div>
       </section>

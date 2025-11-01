@@ -12,11 +12,10 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
   const services = [
     {
       icon: <PenTool className="h-12 w-12 text-green-600" />,
-      title: "Crypto Funnel + LinkedIn Growth Package",
-      description: "Our signature offering for crypto founders raising capital. We help you capture and educate investors while building consistent LinkedIn presence — resulting in more trust, followers, and capital raised.",
+      title: "Crypto Funnel + Socialmedia Growth Package",
+      description: "Our signature offering for crypto founders through educational email courses, EEC's, and newsletters  while building consistent LinkedIn presence — resulting in more trust, followers, and capital raised.",
       features: [
         "Funnel audit to identify leaks in your investor journey",
-        "Compelling opt-in hook investors can't ignore",
         "Educational email course turning cold leads into believers",
         "Professional landing page setup for high conversions",
         "LinkedIn ghostwriting for thought leadership",
@@ -30,10 +29,10 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
     },
     {
       icon: <Target className="h-12 w-12 text-blue-600" />,
-      title: "Crypto Marketing for Pre-Sales & ICOs",
-      description: "Specialized promotional content for token projects and initial coin offerings. We create compelling campaigns that educate potential investors and drive participation in your funding rounds.",
+      title: "Crypto Marketing for Presale & ICOs",
+      description: "Specialized promotional content for presale projects and initial coin offerings. We create compelling campaigns that educate potential investors and drive participation in your funding rounds.",
       features: [
-        "Pre-sale promotional content strategy",
+        "Presale promotional content strategy",
         "ICO marketing campaigns and materials",
         "Investor education content and whitepapers",
         "Landing pages optimized for token sales",
@@ -42,7 +41,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
         "Compliance-aware messaging for regulated markets"
       ],
       deliverable: "Complete marketing campaign that drives qualified investor interest and participation",
-      image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080&auto=format"
+      image: "https://images.unsplash.com/photo-1639322537504-6427a16b0a28?q=80&w=1080&auto=format&fit=crop"
     }
   ]
 
@@ -71,14 +70,53 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
             size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
           >
-            Get Custom Pricing
+            Get In Touch
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </section>
 
-      {/* Services Grid */}
+      {/* Free Course Section */}
       <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-lg">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <div className="text-sm font-semibold tracking-wide text-blue-600 uppercase mb-3">
+                  Free Course
+                </div>
+                <h3 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
+                  Increase Lead Conversion
+                  <br />
+                  in 5 Days
+                </h3>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  A FREE, 5-day email course breaking down the biggest digital marketing mistakes that
+                  cause lower win rates, deals slipping into the next quarter, and a thin pipeline.
+                </p>
+                <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-3 max-w-xl">
+                  <Input type="email" required placeholder="Email Address" className="h-12" />
+                  <Button type="submit" className="h-12 bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap px-6">
+                    Send Me Lesson #1
+                  </Button>
+                </form>
+              </div>
+              <div>
+                <div className="bg-gray-100 rounded-2xl p-6 lg:p-10 flex items-center justify-center shadow-inner">
+                  <img
+                    src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1200&auto=format&fit=crop"
+                    alt="Natural Capital Marketing Blueprint book mockup"
+                    className="w-full h-auto max-w-md rounded-xl shadow-md"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Grid */}
+      <section id="what-we-do" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">What We Do</h2>
@@ -187,45 +225,6 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
         </div>
       </section>
 
-      {/* Free Course Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-lg">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="text-sm font-semibold tracking-wide text-blue-600 uppercase mb-3">
-                  Free Course
-                </div>
-                <h3 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
-                  Increase Lead Conversion
-                  <br />
-                  in 5 Days
-                </h3>
-                <p className="text-gray-600 mb-8 leading-relaxed">
-                  A FREE, 5-day email course breaking down the biggest digital marketing mistakes that
-                  cause lower win rates, deals slipping into the next quarter, and a thin pipeline.
-                </p>
-                <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-3 max-w-xl">
-                  <Input type="email" required placeholder="Email Address" className="h-12" />
-                  <Button type="submit" className="h-12 bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap px-6">
-                    Send Me Lesson #1
-                  </Button>
-                </form>
-              </div>
-              <div>
-                <div className="bg-gray-100 rounded-2xl p-6 lg:p-10 flex items-center justify-center shadow-inner">
-                  <img
-                    src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=1200&auto=format&fit=crop"
-                    alt="Natural Capital Marketing Blueprint book mockup"
-                    className="w-full h-auto max-w-md rounded-xl shadow-md"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -242,7 +241,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
               size="lg"
               className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3"
             >
-              Get Custom Pricing
+              Get In Touch
             </Button>
           </div>
         </div>

@@ -4,9 +4,10 @@ import { ArrowRight } from 'lucide-react'
 
 interface HeroSectionProps {
   onGetStarted: () => void
+  onSeeOurWork?: () => void
 }
 
-export function HeroSection({ onGetStarted }: HeroSectionProps) {
+export function HeroSection({ onGetStarted, onSeeOurWork }: HeroSectionProps) {
   return (
     <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-20 lg:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,6 +35,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                 variant="outline" 
                 size="lg"
                 className="px-8 py-3 border-gray-300 text-gray-700 hover:bg-gray-50"
+                onClick={onSeeOurWork}
               >
                 See Our Work
               </Button>
@@ -50,9 +52,9 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                     <div className="w-4 h-4 bg-blue-500 rounded"></div>
                   </div>
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Content Strategy</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">Thought leadership</h3>
                 <p className="text-sm text-gray-600">
-                  Strategic content that drives engagement and conversions
+                  Build authority and influence that attracts investors and builds trust
                 </p>
               </div>
 

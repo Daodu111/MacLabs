@@ -1,8 +1,13 @@
+import React from 'react'
 import { Button } from './ui/button'
 import { ImageWithFallback } from './figma/ImageWithFallback'
 import { ArrowRight, Search, PenTool, Target, Settings } from 'lucide-react'
 
-export function ServicesSection() {
+interface ServicesSectionProps {
+  onPageChange?: (page: string, postId?: string) => void
+}
+
+export function ServicesSection({ onPageChange }: ServicesSectionProps) {
   const services = [
     {
       icon: <PenTool className="h-8 w-8 text-green-600" />,
@@ -14,9 +19,9 @@ export function ServicesSection() {
     {
       icon: <Target className="h-8 w-8 text-blue-600" />,
       title: "Crypto Marketing & Funnels",
-      description: "Specialized marketing for pre-sale projects and ICOs. We create compelling promotional content, landing pages, and investor education funnels that convert cold leads into warm believers ready to invest.",
+      description: "Specialized marketing for Presale projects and ICOs. We create compelling promotional content, landing pages, and investor education funnels that convert cold leads into warm believers ready to invest.",
       image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1080&q=80",
-      features: ["Pre-sale & ICO promotional content", "High-converting landing pages", "Investor education funnels", "Email sequences for lead nurturing", "Analytics & funnel optimization"]
+      features: ["Presale & ICO promotional content", "High-converting landing pages", "Investor education funnels", "Email sequences for lead nurturing", "Analytics & funnel optimization"]
     }
   ]
 
@@ -27,7 +32,7 @@ export function ServicesSection() {
           <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Core Services</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             We specialize in two high-impact services for crypto and Web3 brands: strategic ghostwriting 
-            for founders raising capital, and crypto marketing for pre-sale and ICO projects.
+            for founders raising capital, and crypto marketing for Presale and ICO projects.
           </p>
         </div>
 
@@ -64,6 +69,18 @@ export function ServicesSection() {
                 <Button 
                   variant="outline" 
                   className="group border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                  onClick={() => {
+                    if (onPageChange) {
+                      onPageChange('services')
+                      // Scroll to "What We Do" section after navigation
+                      setTimeout(() => {
+                        const element = document.getElementById('what-we-do')
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        }
+                      }, 300)
+                    }
+                  }}
                 >
                   Learn More
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

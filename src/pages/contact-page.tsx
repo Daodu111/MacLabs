@@ -1,13 +1,15 @@
 import { useState } from 'react'
+import type { FormEvent, ChangeEvent } from 'react'
+import './contact-accordion.css'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../config/firebase'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Textarea } from '../components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { Mail, Phone, MapPin, Clock, MessageSquare, Send } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog'
-import { Button as UIButton } from '../components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '../components/ui/dialog'
+import { Mail, Phone, MapPin, Clock, MessageSquare, Send, Plus, Minus, CheckCircle } from 'lucide-react'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '../components/ui/accordion'
 import { GoogleSheetsService } from '../services/integrations'
 
 export function ContactPage() {
@@ -15,48 +17,56 @@ export function ContactPage() {
     name: '',
     email: '',
     phone: '',
-    company: '',
     service: '',
-    budget: '',
     message: ''
   })
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [showErrorModal, setShowErrorModal] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
     
     try {
-      // Save to Firestore 'contacts' collection
-      await addDoc(collection(db, 'contacts'), {
-        ...formData,
-        status: 'new',
-        createdAt: serverTimestamp(),
-      })
+      // Try to save to Firestore 'contacts' collection (non-blocking)
+      try {
+        await addDoc(collection(db, 'contacts'), {
+          ...formData,
+          status: 'new',
+          createdAt: serverTimestamp(),
+        })
+      } catch (firestoreError) {
+        console.warn('Firestore save failed (non-blocking):', firestoreError)
+      }
 
-      // Also notify via Google Apps Script Web App (uses Gmail; free tier)
+      // Also notify via Google Apps Script Web App (non-blocking)
       try {
         await GoogleSheetsService.sendToGoogleSheets(formData, 'contact')
       } catch (gsError) {
         console.warn('Google Apps Script notification skipped/failed (non-blocking):', gsError)
       }
 
-      setIsSuccessOpen(true)
+      // Reset form
       setFormData({
         name: '',
         email: '',
         phone: '',
-        company: '',
         service: '',
-        budget: '',
         message: ''
       })
+      
+      // Show success message
+      setShowSuccessModal(true)
     } catch (error) {
       console.error('Contact form error:', error)
-      alert('There was an error submitting your message. Please try again or contact us directly.')
+      setShowErrorModal(true)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -74,12 +84,12 @@ export function ContactPage() {
       icon: <Phone className="h-6 w-6 text-green-600" />,
       title: "Call Us",
       content: "+447831692196",
-      description: "Mon - Sat, 9AM-6PM GMT"
+      description: "Mon - Fri, 9AM to 5PM GMT"
     },
     {
       icon: <Clock className="h-6 w-6 text-orange-600" />,
       title: "Business Hours",
-      content: "Mon - Sat 9AM-6PM",
+      content: "Mon - Fri 9AM to 5PM",
       description: "GMT (Greenwich Mean Time)"
     }
   ]
@@ -106,21 +116,55 @@ export function ContactPage() {
   return (
     <div className="pt-16">
       {/* Success Modal */}
-      <Dialog open={isSuccessOpen} onOpenChange={setIsSuccessOpen}>
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Message sent successfully</DialogTitle>
-            <DialogDescription>
-              Thank you for reaching out. We'll get back to you within 24 hours.
+          <DialogHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle className="h-10 w-10 text-green-600" />
+            </div>
+            <DialogTitle className="text-2xl font-bold text-gray-900">
+              Message Sent Successfully!
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 pt-2">
+              Thank you! Your message has been sent successfully. We will get back to you within 24 hours.
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-4 flex justify-end">
-            <UIButton onClick={() => setIsSuccessOpen(false)} className="bg-blue-600 hover:bg-blue-700 text-white">
-              Close
-            </UIButton>
-          </div>
+          <DialogFooter className="sm:justify-center">
+            <Button 
+              onClick={() => setShowSuccessModal(false)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+            >
+              Got it!
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Error Modal */}
+      <Dialog open={showErrorModal} onOpenChange={setShowErrorModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+              <MessageSquare className="h-10 w-10 text-red-600" />
+            </div>
+            <DialogTitle className="text-2xl font-bold text-gray-900">
+              Oops! Something Went Wrong
+            </DialogTitle>
+            <DialogDescription className="text-gray-600 pt-2">
+              There was an error submitting your message. Please try again or contact us directly.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center">
+            <Button 
+              onClick={() => setShowErrorModal(false)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -143,7 +187,7 @@ export function ContactPage() {
             </span>
             <span className="flex items-center">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-              No Pressure Sales
+              Web3 Native Expertise
             </span>
           </div>
         </div>
@@ -208,21 +252,6 @@ export function ContactPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Company Name
-                      </label>
-                      <Input
-                        type="text"
-                        name="company"
-                        value={formData.company}
-                        onChange={handleInputChange}
-                        placeholder="Your Company"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         Service Interest
                       </label>
                       <Select value={formData.service} onValueChange={(value) => setFormData({...formData, service: value})}>
@@ -237,23 +266,6 @@ export function ContactPage() {
                           <SelectItem value="brand-design">Brand Design</SelectItem>
                           <SelectItem value="analytics">Analytics & Reporting</SelectItem>
                           <SelectItem value="full-service">Full Service Package</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Monthly Budget
-                      </label>
-                      <Select value={formData.budget} onValueChange={(value) => setFormData({...formData, budget: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select budget range" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="under-2k">Under £1,500</SelectItem>
-                          <SelectItem value="2k-5k">£1,500 - £4,000</SelectItem>
-                          <SelectItem value="5k-10k">£4,000 - £8,000</SelectItem>
-                          <SelectItem value="10k-25k">£8,000 - £20,000</SelectItem>
-                          <SelectItem value="over-25k">Over £20,000</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -276,9 +288,10 @@ export function ContactPage() {
                     type="submit"
                     size="lg"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    disabled={isSubmitting}
                   >
                     <Send className="h-5 w-5 mr-2" />
-                    Send Message
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </Button>
                 </form>
               </div>
@@ -328,34 +341,45 @@ export function ContactPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 relative" style={{ background: 'linear-gradient(to bottom, #3b82f6, #2563eb, #1d4ed8)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-gray-600">
+          <div className="text-center mb-12 pt-8">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+              Frequently Asked Questions
+            </h2>
+            <p className="text-lg md:text-xl" style={{ color: '#ffffff' }}>
               Get quick answers to common questions about our services and process.
             </p>
           </div>
 
-          <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-lg p-6 shadow-sm">
-                <h3 className="font-semibold text-gray-900 mb-3">{faq.question}</h3>
-                <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
-              </div>
-            ))}
-          </div>
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 py-10 md:py-14">
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`}
+                  className="border-b border-gray-200 last:border-b-0"
+                >
+                  <AccordionTrigger className="px-0 pt-6 pb-6 first:pt-0 hover:no-underline [&>svg:last-child]:!hidden group items-center">
+                    <span className="text-left font-semibold text-gray-900 pr-6 flex-1 text-lg">
+                      {faq.question}
+                    </span>
+                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 transition-colors pointer-events-none ml-4 my-2" style={{ borderRadius: '50%', aspectRatio: '1 / 1' }}>
+                      <Plus className="h-5 w-5 text-white transition-all accordion-icon-plus" />
+                      <Minus className="h-5 w-5 text-white transition-all accordion-icon-minus hidden" />
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-0 pb-6">
+                    <div className="pt-2">
+                      <p className="text-gray-600 leading-relaxed text-base">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
 
-          <div className="text-center mt-12">
-            <p className="text-gray-600 mb-4">
-              Still have questions? We're here to help.
-            </p>
-            <Button 
-              variant="outline"
-              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-            >
-              Contact Support
-            </Button>
           </div>
         </div>
       </section>

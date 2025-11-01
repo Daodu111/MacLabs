@@ -1,0 +1,23 @@
+/* Custom styles for accordion plus/minus icons */
+/* Target the trigger element with data-state attribute */
+button[data-state="open"] .accordion-icon-plus {
+  display: none !important;
+}
+
+button[data-state="open"] .accordion-icon-minus {
+  display: block !important;
+}
+
+button[data-state="closed"] .accordion-icon-minus {
+  display: none !important;
+}
+
+button[data-state="closed"] .accordion-icon-plus {
+  display: block !important;
+}
+
+/* Hide the default chevron icon from AccordionTrigger */
+button[data-slot="accordion-trigger"] > svg:last-child {
+  display: none !important;
+}
+

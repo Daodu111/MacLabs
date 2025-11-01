@@ -2,9 +2,23 @@
   import { defineConfig } from 'vite';
   import react from '@vitejs/plugin-react-swc';
   import path from 'path';
+  import { copyFileSync } from 'fs';
+
+  // Plugin to copy index.html for SPA routes
+  const copyIndexPlugin = () => {
+    return {
+      name: 'copy-index-html',
+      closeBundle() {
+        const routes = ['about', 'services', 'blog', 'contact', 'admin', 'admin-dashboard'];
+        routes.forEach(route => {
+          copyFileSync('build/index.html', `build/${route}.html`);
+        });
+      }
+    }
+  }
 
   export default defineConfig({
-    plugins: [react()],
+    plugins: [react(), copyIndexPlugin()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {

@@ -1,1 +1,0 @@
-const I="dgmxmuxfvozbrpxcnwou",c="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnbXhtdXhmdm96YnJweGNud291Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc3NzAyMzksImV4cCI6MjA3MzM0NjIzOX0.85xRcobwQ5VgKMljv5xKerRfi2xGR-utymD62h0LQ5c";export{I as projectId,c as publicAnonKey};

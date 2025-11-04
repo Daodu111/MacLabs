@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
-import { ArrowLeft, Calendar, User, Clock, Tag, Share2, Facebook, Twitter, Linkedin, Link2, MessageCircle, Heart, Bookmark, Eye, Check } from 'lucide-react'
+import { ArrowLeft, Calendar, User, Clock, Tag, Share2, Facebook, Linkedin, Link2, MessageCircle, ThumbsUp, Check } from 'lucide-react'
 import { blogService } from '../services/blogService'
+
+// Custom X (Twitter) Icon Component
+const XIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+)
 
 interface BlogPostPageProps {
   onPageChange: (page: string, postId?: string) => void
@@ -12,11 +19,13 @@ interface BlogPostPageProps {
 export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
   const [isSharing, setIsSharing] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
-  const [isBookmarked, setIsBookmarked] = useState(false)
   const [blogPost, setBlogPost] = useState<any>(null)
   const [relatedPosts, setRelatedPosts] = useState<any[]>([])
-  const [likeCount, setLikeCount] = useState(0)
+  
+  // New Applause Feature State
+  const [applauded, setApplauded] = useState(false)
+  const [applause, setApplause] = useState(0)
+  const [isApplauding, setIsApplauding] = useState(false)
   // comments removed
 
   useEffect(() => {
@@ -32,10 +41,6 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
             // Get related posts
             const related = await blogService.getRelatedPosts(postId, 3)
             setRelatedPosts(related)
-            
-            // Check if post is bookmarked
-            const bookmarkedPosts = JSON.parse(localStorage.getItem('bookmarkedPosts') || '[]')
-            setIsBookmarked(bookmarkedPosts.includes(postId))
           }
         } catch (error) {
           console.error('Error loading post data:', error)
@@ -46,15 +51,16 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
     loadPostData()
   }, [postId])
 
-  // Load saved likes
+  // Initialize applause state
   useEffect(() => {
-    if (postId) {
-      // Load saved likes
-      const savedLikes = JSON.parse(localStorage.getItem('likedPosts') || '[]')
-      setIsLiked(savedLikes.includes(postId))
+    if (postId && blogPost) {
+      // Check if user has applauded this post
+      const applaudedPosts = localStorage.getItem('applaudedPosts')
+      const applaudedArray = applaudedPosts ? JSON.parse(applaudedPosts) : []
+      setApplauded(applaudedArray.includes(postId))
       
-      // Initialize like count from blog post data
-      setLikeCount(blogPost?.likes || 0)
+      // Set initial applause count
+      setApplause(blogPost.applause || 0)
     }
   }, [postId, blogPost])
 
@@ -130,9 +136,19 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
 
   const handleCopyLink = async () => {
     try {
-      // Create a shareable URL with post ID parameter
+      // Create a URL-friendly slug from the title
+      const titleSlug = blogPost.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]+/g, '') // Remove special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/(^-|-$)/g, '') // Remove leading/trailing hyphens
+        .substring(0, 60) // Limit length
+      
+      // Create a shareable URL with post ID and title slug
+      // Format: /blog/post-title-slug?post=postId
       const baseUrl = window.location.origin
-      const shareableUrl = `${baseUrl}?post=${blogPost.id}`
+      const shareableUrl = `${baseUrl}/blog/${titleSlug}?post=${blogPost.id}`
+      
       await navigator.clipboard.writeText(shareableUrl)
       setCopySuccess(true)
       setTimeout(() => setCopySuccess(false), 2000)
@@ -141,51 +157,35 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
     }
   }
 
-  const handleLike = async () => {
-    if (!isLiked) {
-      try {
-        await blogService.incrementLikes(blogPost.id)
-        setLikeCount(prev => prev + 1)
-      } catch (error) {
-        console.error('Error incrementing likes:', error)
+  // New Applause Handler
+  const handleApplaud = async () => {
+    if (!postId || isApplauding) return
+    setIsApplauding(true)
+
+    const wasApplauded = applauded
+    setApplauded(!wasApplauded)
+    setApplause(prev => wasApplauded ? Math.max(0, prev - 1) : prev + 1)
+
+    try {
+      const stored = localStorage.getItem('applaudedPosts')
+      const array = stored ? JSON.parse(stored) : []
+      if (wasApplauded) {
+        const filtered = array.filter((id: string) => id !== postId)
+        localStorage.setItem('applaudedPosts', JSON.stringify(filtered))
+        await blogService.decrementApplause(blogPost.id)
+      } else {
+        localStorage.setItem('applaudedPosts', JSON.stringify([...array, postId]))
+        await blogService.incrementApplause(blogPost.id)
       }
-    } else {
-      try {
-        await blogService.decrementLikes(blogPost.id)
-        setLikeCount(prev => Math.max(0, prev - 1))
-      } catch (error) {
-        console.error('Error decrementing likes:', error)
-      }
-    }
-    setIsLiked(!isLiked)
-    
-    // Save to localStorage for UI state
-    const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]')
-    if (isLiked) {
-      const updatedLikes = likedPosts.filter((id: string) => id !== postId)
-      localStorage.setItem('likedPosts', JSON.stringify(updatedLikes))
-    } else {
-      localStorage.setItem('likedPosts', JSON.stringify([...likedPosts, postId]))
+    } catch (error) {
+      console.error('Applause error:', error)
+      setApplauded(wasApplauded)
+      setApplause(prev => wasApplauded ? prev + 1 : Math.max(0, prev - 1))
+    } finally {
+      setIsApplauding(false)
     }
   }
 
-  const handleBookmark = () => {
-    if (!postId) return
-    
-    const bookmarkedPosts = JSON.parse(localStorage.getItem('bookmarkedPosts') || '[]')
-    
-    if (isBookmarked) {
-      // Remove from bookmarks
-      const updatedBookmarks = bookmarkedPosts.filter((id: string) => id !== postId)
-      localStorage.setItem('bookmarkedPosts', JSON.stringify(updatedBookmarks))
-    } else {
-      // Add to bookmarks
-      bookmarkedPosts.push(postId)
-      localStorage.setItem('bookmarkedPosts', JSON.stringify(bookmarkedPosts))
-    }
-    
-    setIsBookmarked(!isBookmarked)
-  }
 
   // comments removed
 
@@ -269,24 +269,23 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-4 mb-8 pt-12 pb-6">
-            {/* Like Button */}
+            {/* New Applause Button */}
             <button 
-              onClick={handleLike}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                isLiked 
-                  ? 'border-red-500 bg-red-500 text-white' 
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
+              onClick={handleApplaud}
+              disabled={isApplauding}
+              className={`group flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all duration-200 ${
+                applauded 
+                  ? 'bg-blue-50 border-blue-600 text-blue-700' 
+                  : 'bg-white border-gray-300 text-gray-700 hover:border-blue-500 hover:bg-blue-50'
+              } ${isApplauding ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              <Heart 
-                className="h-4 w-4"
-                style={{
-                  fill: isLiked ? 'currentColor' : 'none',
-                  stroke: isLiked ? 'currentColor' : '#ef4444',
-                  strokeWidth: 2
-                }}
+              <ThumbsUp 
+                className={`w-5 h-5 transition-all duration-200 ${
+                  applauded ? 'fill-blue-600 stroke-blue-600' : 'fill-none stroke-current group-hover:stroke-blue-600'
+                }`}
+                strokeWidth={2}
               />
-              {isLiked ? 'Liked' : 'Like'} ({likeCount})
+              <span className="font-medium">{applause}</span>
             </button>
 
             {/* Share Button with Dropdown */}
@@ -301,79 +300,57 @@ export function BlogPostPage({ onPageChange, postId }: BlogPostPageProps) {
               
               {/* Share Dropdown */}
               {isSharing && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-xl shadow-xl z-10 overflow-hidden">
-                  <div className="py-2">
-                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide border-b border-gray-100">
-                      Share on Social
+                <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-10 overflow-hidden">
+                  <div className="px-4 py-4">
+                    <div className="flex items-center gap-3 justify-center">
+                      <button
+                        onClick={() => handleShare('linkedin')}
+                        className="p-3 rounded-lg hover:bg-blue-50 transition-all duration-200 group"
+                        title="Share on LinkedIn"
+                      >
+                        <Linkedin className="h-6 w-6 text-blue-600 group-hover:scale-110 transition-transform" />
+                      </button>
+                      <button
+                        onClick={() => handleShare('twitter')}
+                        className="p-3 rounded-lg hover:bg-gray-100 transition-all duration-200 group"
+                        title="Share on X"
+                      >
+                        <XIcon className="h-6 w-6 text-gray-900 group-hover:scale-110 transition-transform" />
+                      </button>
+                      <button
+                        onClick={() => handleShare('facebook')}
+                        className="p-3 rounded-lg hover:bg-blue-50 transition-all duration-200 group"
+                        title="Share on Facebook"
+                      >
+                        <Facebook className="h-6 w-6 text-blue-600 group-hover:scale-110 transition-transform" />
+                      </button>
+                      <button
+                        onClick={() => handleShare('whatsapp')}
+                        className="p-3 rounded-lg hover:bg-green-50 transition-all duration-200 group"
+                        title="Share on WhatsApp"
+                      >
+                        <MessageCircle className="h-6 w-6 text-green-500 group-hover:scale-110 transition-transform" />
+                      </button>
+                      <button
+                        onClick={handleCopyLink}
+                        className="p-3 rounded-lg hover:bg-gray-50 transition-all duration-200 group"
+                        title="Copy Link"
+                      >
+                        {copySuccess ? (
+                          <Check className="h-6 w-6 text-green-500 group-hover:scale-110 transition-transform" />
+                        ) : (
+                          <Link2 className="h-6 w-6 text-gray-500 group-hover:scale-110 transition-transform" />
+                        )}
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleShare('linkedin')}
-                      className="flex items-center gap-3 w-full px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 group"
-                    >
-                      <Linkedin className="h-5 w-5 text-blue-600 group-hover:scale-110 transition-transform" />
-                      <span className="font-medium">LinkedIn</span>
-                    </button>
-                    <button
-                      onClick={() => handleShare('twitter')}
-                      className="flex items-center gap-3 w-full px-4 py-3 text-left text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition-all duration-200 group"
-                    >
-                      <Twitter className="h-5 w-5 text-blue-400 group-hover:scale-110 transition-transform" />
-                      <span className="font-medium">X (Twitter)</span>
-                    </button>
-                    <button
-                      onClick={() => handleShare('facebook')}
-                      className="flex items-center gap-3 w-full px-4 py-3 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 group"
-                    >
-                      <Facebook className="h-5 w-5 text-blue-600 group-hover:scale-110 transition-transform" />
-                      <span className="font-medium">Facebook</span>
-                    </button>
-                    <button
-                      onClick={() => handleShare('whatsapp')}
-                      className="flex items-center gap-3 w-full px-4 py-3 text-left text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all duration-200 group"
-                    >
-                      <MessageCircle className="h-5 w-5 text-green-500 group-hover:scale-110 transition-transform" />
-                      <span className="font-medium">WhatsApp</span>
-                    </button>
-                    <hr className="my-2 border-gray-100" />
-                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Other Options
-                    </div>
-                    <button
-                      onClick={handleCopyLink}
-                      className="flex items-center gap-3 w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 group"
-                    >
-                      {copySuccess ? (
-                        <>
-                          <Check className="h-5 w-5 text-green-500 group-hover:scale-110 transition-transform" />
-                          <span className="font-medium text-green-600">Copied to Clipboard!</span>
-                        </>
-                      ) : (
-                        <>
-                          <Link2 className="h-5 w-5 text-gray-500 group-hover:scale-110 transition-transform" />
-                          <span className="font-medium">Copy Link</span>
-                        </>
-                      )}
-                    </button>
                   </div>
                 </div>
               )}
             </div>
             
-            {/* Save/Bookmark Button */}
-            <button 
-              onClick={handleBookmark}
-              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
-                isBookmarked 
-                  ? 'border-blue-600 bg-blue-50 text-blue-600' 
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-current' : ''}`} />
-              {isBookmarked ? 'Saved' : 'Save'}
-            </button>
           </div>
           
-          {/* Horizontal Line Below Share & Save */}
+          {/* Horizontal Line Below Share */}
           <hr className="border-gray-300 my-8 mb-12" />
           
           {/* Article Content */}

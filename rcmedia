@@ -1,0 +1,122 @@
+[1mdiff --git a/build/about.html b/build/about.html[m
+[1mindex 8192a43..6d277c3 100644[m
+[1m--- a/build/about.html[m
+[1m+++ b/build/about.html[m
+[36m@@ -5,7 +5,8 @@[m
+       <meta charset="UTF-8" />[m
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />[m
+       <title>MacLabs Marketing</title>[m
+[31m-      <link rel="icon" type="image/png" href="/favicon.png" />[m
+[32m+[m[32m      <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />[m[41m[m
+[32m+[m[32m      <link rel="apple-touch-icon" href="/favicon.png" />[m[41m[m
+       <script type="module" crossorigin src="/assets/index-0SY6NWkx.js"></script>[m
+       <link rel="stylesheet" crossorigin href="/assets/index-BvRFvV-S.css">[m
+     </head>[m
+[1mdiff --git a/build/admin-dashboard.html b/build/admin-dashboard.html[m
+[1mindex 8192a43..6d277c3 100644[m
+[1m--- a/build/admin-dashboard.html[m
+[1m+++ b/build/admin-dashboard.html[m
+[36m@@ -5,7 +5,8 @@[m
+       <meta charset="UTF-8" />[m
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />[m
+       <title>MacLabs Marketing</title>[m
+[31m-      <link rel="icon" type="image/png" href="/favicon.png" />[m
+[32m+[m[32m      <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />[m[41m[m
+[32m+[m[32m      <link rel="apple-touch-icon" href="/favicon.png" />[m[41m[m
+       <script type="module" crossorigin src="/assets/index-0SY6NWkx.js"></script>[m
+       <link rel="stylesheet" crossorigin href="/assets/index-BvRFvV-S.css">[m
+     </head>[m
+[1mdiff --git a/build/admin.html b/build/admin.html[m
+[1mindex 8192a43..6d277c3 100644[m
+[1m--- a/build/admin.html[m
+[1m+++ b/build/admin.html[m
+[36m@@ -5,7 +5,8 @@[m
+       <meta charset="UTF-8" />[m
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />[m
+       <title>MacLabs Marketing</title>[m
+[31m-      <link rel="icon" type="image/png" href="/favicon.png" />[m
+[32m+[m[32m      <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />[m[41m[m
+[32m+[m[32m      <link rel="apple-touch-icon" href="/favicon.png" />[m[41m[m
+       <script type="module" crossorigin src="/assets/index-0SY6NWkx.js"></script>[m
+       <link rel="stylesheet" crossorigin href="/assets/index-BvRFvV-S.css">[m
+     </head>[m
+[1mdiff --git a/build/blog.html b/build/blog.html[m
+[1mindex 8192a43..6d277c3 100644[m
+[1m--- a/build/blog.html[m
+[1m+++ b/build/blog.html[m
+[36m@@ -5,7 +5,8 @@[m
+       <meta charset="UTF-8" />[m
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />[m
+       <title>MacLabs Marketing</title>[m
+[31m-      <link rel="icon" type="image/png" href="/favicon.png" />[m
+[32m+[m[32m      <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />[m[41m[m
+[32m+[m[32m      <link rel="apple-touch-icon" href="/favicon.png" />[m[41m[m
+       <script type="module" crossorigin src="/assets/index-0SY6NWkx.js"></script>[m
+       <link rel="stylesheet" crossorigin href="/assets/index-BvRFvV-S.css">[m
+     </head>[m
+[1mdiff --git a/build/contact.html b/build/contact.html[m
+[1mindex 8192a43..6d277c3 100644[m
+[1m--- a/build/contact.html[m
+[1m+++ b/build/contact.html[m
+[36m@@ -5,7 +5,8 @@[m
+       <meta charset="UTF-8" />[m
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />[m
+       <title>MacLabs Marketing</title>[m
+[31m-      <link rel="icon" type="image/png" href="/favicon.png" />[m
+[32m+[m[32m      <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />[m[41m[m
+[32m+[m[32m      <link rel="apple-touch-icon" href="/favicon.png" />[m[41m[m
+       <script type="module" crossorigin src="/assets/index-0SY6NWkx.js"></script>[m
+       <link rel="stylesheet" crossorigin href="/assets/index-BvRFvV-S.css">[m
+     </head>[m
+[1mdiff --git a/build/favicon.png b/build/favicon.png[m
+[1mindex 3d56dd7..d773f80 100644[m
+Binary files a/build/favicon.png and b/build/favicon.png differ
+[1mdiff --git a/build/index.html b/build/index.html[m
+[1mindex 8192a43..6d277c3 100644[m
+[1m--- a/build/index.html[m
+[1m+++ b/build/index.html[m
+[36m@@ -5,7 +5,8 @@[m
+       <meta charset="UTF-8" />[m
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />[m
+       <title>MacLabs Marketing</title>[m
+[31m-      <link rel="icon" type="image/png" href="/favicon.png" />[m
+[32m+[m[32m      <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />[m[41m[m
+[32m+[m[32m      <link rel="apple-touch-icon" href="/favicon.png" />[m[41m[m
+       <script type="module" crossorigin src="/assets/index-0SY6NWkx.js"></script>[m
+       <link rel="stylesheet" crossorigin href="/assets/index-BvRFvV-S.css">[m
+     </head>[m
+[1mdiff --git a/build/media/rainfinancial_logo.jpg b/build/media/rainfinancial_logo.jpg[m
+[1mindex deeb482..be60467 100644[m
+Binary files a/build/media/rainfinancial_logo.jpg and b/build/media/rainfinancial_logo.jpg differ
+[1mdiff --git a/build/media/yahoo_finance_logo.jpg b/build/media/yahoo_finance_logo.jpg[m
+[1mindex 1e21a0d..fa97369 100644[m
+Binary files a/build/media/yahoo_finance_logo.jpg and b/build/media/yahoo_finance_logo.jpg differ
+[1mdiff --git a/build/media/zypto_logo.jpg b/build/media/zypto_logo.jpg[m
+[1mindex e8e4be8..e1e204f 100644[m
+Binary files a/build/media/zypto_logo.jpg and b/build/media/zypto_logo.jpg differ
+[1mdiff --git a/build/services.html b/build/services.html[m
+[1mindex 8192a43..6d277c3 100644[m
+[1m--- a/build/services.html[m
+[1m+++ b/build/services.html[m
+[36m@@ -5,7 +5,8 @@[m
+       <meta charset="UTF-8" />[m
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />[m
+       <title>MacLabs Marketing</title>[m
+[31m-      <link rel="icon" type="image/png" href="/favicon.png" />[m
+[32m+[m[32m      <link rel="icon" type="image/png" href="/favicon.png" sizes="any" />[m[41m[m
+[32m+[m[32m      <link rel="apple-touch-icon" href="/favicon.png" />[m[41m[m
+       <script type="module" crossorigin src="/assets/index-0SY6NWkx.js"></script>[m
+       <link rel="stylesheet" crossorigin href="/assets/index-BvRFvV-S.css">[m
+     </head>[m
+[1mdiff --git a/public/favicon.png b/public/favicon.png[m
+[1mindex 3d56dd7..d773f80 100644[m
+Binary files a/public/favicon.png and b/public/favicon.png differ
+[1mdiff --git a/public/media/rainfinancial_logo.jpg b/public/media/rainfinancial_logo.jpg[m
+[1mindex deeb482..be60467 100644[m
+Binary files a/public/media/rainfinancial_logo.jpg and b/public/media/rainfinancial_logo.jpg differ
+[1mdiff --git a/public/media/yahoo_finance_logo.jpg b/public/media/yahoo_finance_logo.jpg[m
+[1mindex 1e21a0d..fa97369 100644[m
+Binary files a/public/media/yahoo_finance_logo.jpg and b/public/media/yahoo_finance_logo.jpg differ
+[1mdiff --git a/public/media/zypto_logo.jpg b/public/media/zypto_logo.jpg[m
+[1mindex e8e4be8..e1e204f 100644[m
+Binary files a/public/media/zypto_logo.jpg and b/public/media/zypto_logo.jpg differ

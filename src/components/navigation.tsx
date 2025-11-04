@@ -24,7 +24,12 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <span className="text-2xl font-bold text-primary">MacLabs</span>
+            <button
+              onClick={() => onPageChange('home')}
+              className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              MacLabs
+            </button>
           </div>
 
           {/* Desktop Navigation */}

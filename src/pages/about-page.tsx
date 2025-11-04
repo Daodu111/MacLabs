@@ -92,7 +92,7 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                 About <span className="text-blue-600">MacLabs</span>
               </h1>
               <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                MacLabs helps crypto founders, product leaders, and investor-backed teams communicate with clarity, earn trust, and grow faster. We blend crypto-native understanding with practical marketing to turn complex products into simple, compelling stories.
+                MacLabs helps crypto founders, CEO's, product leaders, and investor-backed teams communicate with clarity, earn trust, and grow faster. We blend crypto-native understanding with practical marketing to turn complex products into simple, compelling stories.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
                 Born from hands-on experience in trading, investing, and working with Web3 teams, we operate where rigor meets creativity—helping you stand out in a crowded, fast-moving market.

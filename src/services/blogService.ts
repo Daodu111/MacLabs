@@ -31,6 +31,7 @@ export interface BlogPost {
   tags: string[]
   views: number
   likes: number
+  applause?: number
   comments: number
   shares: number
   featured: boolean
@@ -77,13 +78,32 @@ class BlogService {
   // Get all blog posts
   async getAllPosts(): Promise<BlogPost[]> {
     try {
-      const q = query(this.postsCollection, orderBy('createdAt', 'desc'))
-      const querySnapshot = await getDocs(q)
+      // Try with orderBy first, fallback to simple query if index is missing
+      let querySnapshot
+      try {
+        const q = query(this.postsCollection, orderBy('createdAt', 'desc'))
+        querySnapshot = await getDocs(q)
+      } catch (orderByError: any) {
+        // If orderBy fails (likely missing index), fallback to simple query
+        console.warn('orderBy failed, using simple query:', orderByError)
+        querySnapshot = await getDocs(this.postsCollection)
+      }
       
-      return querySnapshot.docs.map(doc => ({
+      const posts = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as BlogPost))
+      
+      // Sort client-side if orderBy failed
+      if (posts.length > 0 && posts[0].createdAt) {
+        posts.sort((a, b) => {
+          const aTime = a.createdAt instanceof Timestamp ? a.createdAt.toMillis() : new Date(a.createdAt as any).getTime()
+          const bTime = b.createdAt instanceof Timestamp ? b.createdAt.toMillis() : new Date(b.createdAt as any).getTime()
+          return bTime - aTime
+        })
+      }
+      
+      return posts
     } catch (error) {
       console.error('Error fetching posts:', error)
       return []
@@ -93,17 +113,34 @@ class BlogService {
   // Get published posts only
   async getPublishedPosts(): Promise<BlogPost[]> {
     try {
-      // Temporary: Get all posts and filter client-side to avoid index requirement
-      const q = query(this.postsCollection, orderBy('createdAt', 'desc'))
-      const querySnapshot = await getDocs(q)
+      // Try with orderBy first, fallback to simple query if index is missing
+      let querySnapshot
+      try {
+        const q = query(this.postsCollection, orderBy('createdAt', 'desc'))
+        querySnapshot = await getDocs(q)
+      } catch (orderByError: any) {
+        // If orderBy fails (likely missing index), fallback to simple query
+        console.warn('orderBy failed, using simple query:', orderByError)
+        querySnapshot = await getDocs(this.postsCollection)
+      }
       
       const allPosts = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as BlogPost))
       
+      // Sort client-side if orderBy failed
+      let sortedPosts = allPosts
+      if (allPosts.length > 0 && allPosts[0].createdAt) {
+        sortedPosts = [...allPosts].sort((a, b) => {
+          const aTime = a.createdAt instanceof Timestamp ? a.createdAt.toMillis() : new Date(a.createdAt as any).getTime()
+          const bTime = b.createdAt instanceof Timestamp ? b.createdAt.toMillis() : new Date(b.createdAt as any).getTime()
+          return bTime - aTime
+        })
+      }
+      
       // Filter for published posts client-side
-      return allPosts.filter(post => post.published === true)
+      return sortedPosts.filter(post => post.published === true)
     } catch (error) {
       console.error('Error fetching published posts:', error)
       return []
@@ -113,17 +150,34 @@ class BlogService {
   // Get featured posts
   async getFeaturedPosts(): Promise<BlogPost[]> {
     try {
-      // Temporary: Get all posts and filter client-side to avoid index requirement
-      const q = query(this.postsCollection, orderBy('createdAt', 'desc'))
-      const querySnapshot = await getDocs(q)
+      // Try with orderBy first, fallback to simple query if index is missing
+      let querySnapshot
+      try {
+        const q = query(this.postsCollection, orderBy('createdAt', 'desc'))
+        querySnapshot = await getDocs(q)
+      } catch (orderByError: any) {
+        // If orderBy fails (likely missing index), fallback to simple query
+        console.warn('orderBy failed, using simple query:', orderByError)
+        querySnapshot = await getDocs(this.postsCollection)
+      }
       
       const allPosts = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as BlogPost))
       
+      // Sort client-side if orderBy failed
+      let sortedPosts = allPosts
+      if (allPosts.length > 0 && allPosts[0].createdAt) {
+        sortedPosts = [...allPosts].sort((a, b) => {
+          const aTime = a.createdAt instanceof Timestamp ? a.createdAt.toMillis() : new Date(a.createdAt as any).getTime()
+          const bTime = b.createdAt instanceof Timestamp ? b.createdAt.toMillis() : new Date(b.createdAt as any).getTime()
+          return bTime - aTime
+        })
+      }
+      
       // Filter for featured and published posts client-side
-      return allPosts.filter(post => post.published === true && post.featured === true)
+      return sortedPosts.filter(post => post.published === true && post.featured === true)
     } catch (error) {
       console.error('Error fetching featured posts:', error)
       return []
@@ -203,17 +257,28 @@ class BlogService {
   // Create new post
   async createPost(postData: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<BlogPost | null> {
     try {
+      const now = Timestamp.now()
       const docRef = await addDoc(this.postsCollection, {
         ...postData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       })
       
+      // Fetch the created document to get the server-generated timestamps
+      const createdDoc = await getDoc(docRef)
+      if (createdDoc.exists()) {
+        return {
+          id: createdDoc.id,
+          ...createdDoc.data()
+        } as BlogPost
+      }
+      
+      // Fallback: return with client-side timestamp if fetch fails
       return {
         id: docRef.id,
         ...postData,
-        createdAt: new Date() as any,
-        updatedAt: new Date() as any
+        createdAt: now,
+        updatedAt: now
       } as BlogPost
     } catch (error) {
       console.error('Error creating post:', error)
@@ -282,6 +347,19 @@ class BlogService {
     }
   }
 
+  // Increment applause
+  async incrementApplause(postId: string): Promise<void> {
+    try {
+      const docRef = doc(this.postsCollection, postId)
+      await updateDoc(docRef, {
+        applause: increment(1),
+        updatedAt: serverTimestamp()
+      })
+    } catch (error) {
+      console.error('Error incrementing applause:', error)
+    }
+  }
+
   // Increment shares
   async incrementShares(postId: string): Promise<void> {
     try {
@@ -308,6 +386,19 @@ class BlogService {
       })
     } catch (error) {
       console.error('Error decrementing likes:', error)
+    }
+  }
+
+  // Decrement applause
+  async decrementApplause(postId: string): Promise<void> {
+    try {
+      const docRef = doc(this.postsCollection, postId)
+      await updateDoc(docRef, {
+        applause: increment(-1),
+        updatedAt: serverTimestamp()
+      })
+    } catch (error) {
+      console.error('Error decrementing applause:', error)
     }
   }
 

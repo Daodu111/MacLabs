@@ -9,11 +9,20 @@ interface ServicesPageProps {
 }
 
 export function ServicesPage({ onPageChange }: ServicesPageProps) {
+  // Helper function to navigate to contact form
+  const goToContactForm = () => {
+    onPageChange('contact')
+    // Set hash after navigation to trigger scroll
+    setTimeout(() => {
+      window.location.hash = '#contact-form'
+    }, 100)
+  }
+
   const services = [
     {
       icon: <PenTool className="h-12 w-12 text-green-600" />,
       title: "Crypto Funnel + Socialmedia Growth Package",
-      description: "Our signature offering for crypto founders through educational email courses, EEC's, and newsletters  while building consistent LinkedIn presence — resulting in more trust, followers, and capital raised.",
+      description: "Our signature offering for crypto founders delivers educational email courses, EECs, and newsletters while building a consistent LinkedIn presence — resulting in more trust, followers, and capital raised.",
       features: [
         "Funnel audit to identify leaks in your investor journey",
         "Educational email course turning cold leads into believers",
@@ -66,7 +75,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
             attract qualified investors, and scale through strategic ghostwriting and targeted crypto marketing.
           </p>
           <Button 
-            onClick={() => onPageChange('contact')}
+            onClick={goToContactForm}
             size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
           >
@@ -177,7 +186,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
                 <div className="flex items-center justify-between">
                   <Button 
                     variant="outline"
-                    onClick={() => onPageChange('contact')}
+                    onClick={goToContactForm}
                     className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                   >
                     Get Started
@@ -237,7 +246,7 @@ export function ServicesPage({ onPageChange }: ServicesPageProps) {
           </p>
           <div className="flex justify-center">
             <Button 
-              onClick={() => onPageChange('contact')}
+              onClick={goToContactForm}
               size="lg"
               className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3"
             >

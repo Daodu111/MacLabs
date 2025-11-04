@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
-import { ArrowRight, Calendar, User, Clock, Tag, Star, Search, Filter, Heart, Share2 } from 'lucide-react'
+import { ArrowRight, Calendar, User, Clock, Tag, Star, Search, Filter, ThumbsUp, Share2 } from 'lucide-react'
 import { blogService } from '../services/blogService'
 
 interface BlogPageProps {
@@ -14,8 +14,19 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
   const [categories, setCategories] = useState<any[]>([])
   const [selectedCategory, setSelectedCategory] = useState('All Posts')
   const [searchQuery, setSearchQuery] = useState('')
-  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set())
-  const [postLikes, setPostLikes] = useState<Record<string, number>>({})
+  const [applaudedPosts, setApplaudedPosts] = useState<Set<string>>(new Set())
+  const [postApplause, setPostApplause] = useState<Record<string, number>>({})
+  const [postsToShow, setPostsToShow] = useState(6) // Initial number of posts to display
+  const POSTS_PER_PAGE = 6 // Number of posts to load when "Load More" is clicked
+  
+  // Helper function to navigate to contact form
+  const goToContactForm = () => {
+    onPageChange('contact')
+    // Set hash after navigation to trigger scroll
+    setTimeout(() => {
+      window.location.hash = '#contact-form'
+    }, 100)
+  }
   // comments removed
 
   useEffect(() => {
@@ -26,10 +37,10 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
         const posts = await blogService.getPublishedPosts()
         console.log('📊 Published posts loaded:', posts.length)
         setBlogPosts(posts)
-        // initialize like counts from posts
-        const likesMap: Record<string, number> = {}
-        posts.forEach(p => { likesMap[p.id] = p.likes || 0 })
-        setPostLikes(likesMap)
+        // initialize applause counts from posts
+        const applauseMap: Record<string, number> = {}
+        posts.forEach(p => { applauseMap[p.id] = p.applause || 0 })
+        setPostApplause(applauseMap)
 
         // Get featured post
         const featured = await blogService.getFeaturedPosts()
@@ -53,15 +64,15 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
     return () => {}
   }, [])
 
-  // Load saved likes from localStorage
+  // Load saved applause from localStorage
   useEffect(() => {
-    const savedLikes = localStorage.getItem('likedPosts')
-    if (savedLikes) {
+    const savedApplause = localStorage.getItem('applaudedPosts')
+    if (savedApplause) {
       try {
-        const likedArray = JSON.parse(savedLikes)
-        setLikedPosts(new Set(likedArray))
+        const applaudedArray = JSON.parse(savedApplause)
+        setApplaudedPosts(new Set(applaudedArray))
       } catch (error) {
-        console.error('Error loading saved likes:', error)
+        console.error('Error loading saved applause:', error)
       }
     }
   }, [])
@@ -78,6 +89,20 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
     return matchesCategory && matchesSearch
   })
 
+  // Get posts to display (limited by postsToShow)
+  const displayedPosts = filteredPosts.slice(0, postsToShow)
+  const hasMorePosts = filteredPosts.length > postsToShow
+
+  // Load more posts handler
+  const handleLoadMore = () => {
+    setPostsToShow(prev => prev + POSTS_PER_PAGE)
+  }
+
+  // Reset posts to show when filters change
+  useEffect(() => {
+    setPostsToShow(6) // Reset to initial number when filters change
+  }, [selectedCategory, searchQuery])
+
   const handleCategoryChange = (categoryName: string) => {
     setSelectedCategory(categoryName)
     setCategories(cats => cats.map(cat => ({
@@ -86,42 +111,29 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
     })))
   }
 
-  // Like functionality
-  const handleLike = async (postId: string, e: React.MouseEvent) => {
-    e.stopPropagation() // Prevent card click
-    
-    const isLiked = likedPosts.has(postId)
-    const currentLikes = postLikes[postId] || 0
-    
-    if (isLiked) {
-      // Unlike
-      setLikedPosts(prev => {
-        const newSet = new Set(prev)
-        newSet.delete(postId)
-        return newSet
-      })
-      setPostLikes(prev => ({
-        ...prev,
-        [postId]: Math.max(0, currentLikes - 1)
-      }))
-      try { await blogService.decrementLikes(postId) } catch {}
+  // Applause functionality
+  const handleApplaud = async (postId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    const isApplauded = applaudedPosts.has(postId)
+    const currentPost = blogPosts.find(p => p.id === postId)
+    const currentApplause = postApplause[postId] ?? currentPost?.applause ?? 0
+
+    if (isApplauded) {
+      const newSet = new Set(applaudedPosts)
+      newSet.delete(postId)
+      setApplaudedPosts(newSet)
+      localStorage.setItem('applaudedPosts', JSON.stringify(Array.from(newSet)))
+      setPostApplause(prev => ({ ...prev, [postId]: Math.max(0, currentApplause - 1) }))
+      try { await blogService.decrementApplause(postId) } catch {}
     } else {
-      // Like
-      setLikedPosts(prev => new Set(prev).add(postId))
-      setPostLikes(prev => ({
-        ...prev,
-        [postId]: currentLikes + 1
-      }))
-      try { await blogService.incrementLikes(postId) } catch {}
-    }
-    
-    // Update in localStorage for persistence
-    const likedPostsArray = Array.from(likedPosts)
-    if (isLiked) {
-      const updatedLikes = likedPostsArray.filter(id => id !== postId)
-      localStorage.setItem('likedPosts', JSON.stringify(updatedLikes))
-    } else {
-      localStorage.setItem('likedPosts', JSON.stringify([...likedPostsArray, postId]))
+      const newSet = new Set(applaudedPosts)
+      newSet.add(postId)
+      setApplaudedPosts(newSet)
+      localStorage.setItem('applaudedPosts', JSON.stringify(Array.from(newSet)))
+      setPostApplause(prev => ({ ...prev, [postId]: currentApplause + 1 }))
+      try { await blogService.incrementApplause(postId) } catch {}
     }
   }
 
@@ -303,7 +315,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
           </div>
           
           <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
-            {filteredPosts.map((post) => (
+            {displayedPosts.map((post) => (
               <article 
                 key={post.id} 
                 className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group"
@@ -366,22 +378,21 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
                     <div className="flex items-center gap-4">
                       {/* Like Button */}
                       <button
-                        onClick={(e) => handleLike(post.id, e)}
+                        onClick={(e) => handleApplaud(post.id, e)}
                         className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm border transition-all duration-200 ${
-                          likedPosts.has(post.id)
-                            ? 'bg-red-500 border-red-500 text-white'
+                          applaudedPosts.has(post.id)
+                            ? 'bg-blue-600 border-blue-600 text-white'
                             : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
                         }`}
+                        type="button"
                       >
-                        <Heart
-                          className="h-4 w-4"
-                          style={{
-                            fill: likedPosts.has(post.id) ? 'currentColor' : 'none',
-                            stroke: likedPosts.has(post.id) ? 'currentColor' : '#ef4444',
-                            strokeWidth: 2
-                          }}
+                        <ThumbsUp
+                          className="h-4 w-4 flex-shrink-0"
+                          fill={applaudedPosts.has(post.id) ? 'currentColor' : 'none'}
+                          stroke={applaudedPosts.has(post.id) ? 'currentColor' : '#2563eb'}
+                          strokeWidth={2}
                         />
-                        <span>{(postLikes[post.id] ?? post.likes ?? 0)}</span>
+                        <span className="flex-shrink-0">{(postApplause[post.id] ?? post.applause ?? 0)}</span>
                       </button>
 
                       {/* Share Button */}
@@ -407,16 +418,19 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
             ))}
           </div>
           
-          <div className="text-center mt-12">
-            <Button 
-              variant="outline"
-              size="lg"
-              className="group border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
-            >
-              Load More Posts
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
+          {hasMorePosts && (
+            <div className="text-center mt-12">
+              <Button 
+                onClick={handleLoadMore}
+                variant="outline"
+                size="lg"
+                className="group border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+              >
+                Load More Posts ({filteredPosts.length - postsToShow} remaining)
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -465,7 +479,7 @@ export function BlogPage({ onPageChange }: BlogPageProps) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              onClick={() => onPageChange('contact')}
+              onClick={goToContactForm}
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
             >

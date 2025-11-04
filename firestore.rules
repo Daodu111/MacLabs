@@ -1,10 +1,18 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Blog posts - public read for published posts, authenticated write
+    // Blog posts - public can read all (filtering done client-side), authenticated can write
     match /blog_posts/{postId} {
-      allow read: if resource.data.published == true;
+      // Allow public to read all posts (published filtering happens in the client)
+      allow read: if true;
+      // Allow authenticated users to write (create, update, delete)
       allow write: if request.auth != null;
+    }
+    
+    // Allow public to query the entire blog_posts collection
+    // The client code filters for published posts
+    match /blog_posts/{document=**} {
+      allow read: if true;
     }
     
     // Categories - public read, authenticated write

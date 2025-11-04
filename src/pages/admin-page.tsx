@@ -3,6 +3,8 @@ import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
 import { ArrowLeft, Plus, Edit, Trash2, Eye, Save, X, Upload, Calendar, User, Clock, Tag, Image as ImageIcon, Trash, Bold, Italic, Underline, List, ListOrdered, Link, Quote, Type, AlignLeft, AlignCenter, AlignRight, AlignJustify, Star, Search, Minus, Plus as PlusIcon, RotateCcw, Table as TableIcon } from 'lucide-react'
 import { blogService } from '../services/blogService'
+import { auth } from '../config/firebase'
+import { authService } from '../services/authService'
 
 interface AdminPageProps {
   onPageChange: (page: string, postId?: string) => void
@@ -23,6 +25,7 @@ interface BlogPost {
   tags: string[]
   views: number
   likes: number
+  applause: number
   comments: number
   shares: number
   featured: boolean
@@ -55,7 +58,7 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     author: 'Sam Daodu',
     authorBio: '',
     authorImage: '',
-    category: 'Digital Strategy',
+    category: 'Crypto Marketing',
     image: '',
     tags: [],
     featured: false,
@@ -82,18 +85,42 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
 
   // Note: Posts are now saved directly to Firestore, no localStorage needed
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simple authentication - in production, use proper authentication
-    if (username === 'admin' && password === 'maclabs2024') {
+    setLoginError('')
+    
+    try {
+      // Use Firebase Auth for authentication (required for Storage uploads)
+      // Try to sign in with the provided credentials
+      // Note: You'll need to create a Firebase user with email/password
+      // For now, you can use the admin email/password
+      const email = username.includes('@') ? username : `${username}@maclabs.com`
+      await authService.signIn(email, password)
       setIsAuthenticated(true)
       setLoginError('')
-    } else {
-      setLoginError('Invalid credentials')
+    } catch (error: any) {
+      console.error('Login error:', error)
+      // Fallback to simple auth for backward compatibility
+      if (username === 'admin' && password === 'maclabs2024') {
+        setIsAuthenticated(true)
+        setLoginError('')
+        // Show warning that Firebase Auth is needed for image uploads
+        console.warn('Using simple auth. Image uploads require Firebase Auth. Please create a Firebase user and sign in with email/password.')
+      } else {
+        setLoginError(error?.message || 'Invalid credentials. Note: Image uploads require Firebase Auth sign-in.')
+      }
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      // Sign out from Firebase Auth if signed in
+      if (auth.currentUser) {
+        await authService.signOut()
+      }
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
     setIsAuthenticated(false)
     setUsername('')
     setPassword('')
@@ -111,7 +138,7 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
       author: 'Sam Daodu',
       authorBio: '',
       authorImage: '',
-      category: 'Digital Strategy',
+      category: 'Crypto Marketing',
       image: '',
       tags: [],
       featured: false,
@@ -132,8 +159,10 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
       try {
         const success = await blogService.deletePost(postId)
         if (success) {
-          setBlogPosts(posts => posts.filter(post => post.id !== postId))
-          setFilteredPosts(posts => posts.filter(post => post.id !== postId))
+          // Reload all posts from Firestore to ensure consistency
+          const allPosts = await blogService.getAllPosts()
+          setBlogPosts(allPosts)
+          setFilteredPosts(allPosts)
           alert('Post deleted successfully!')
         } else {
           alert('Error deleting post. Please try again.')
@@ -162,11 +191,12 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
         authorImage: formData.authorImage || '',
         date: editingPost?.date || now.toISOString().split('T')[0],
         readTime: formData.readTime || calculateReadTime(formData.content || ''),
-        category: formData.category || 'Digital Strategy',
+        category: formData.category || 'Crypto Marketing',
         image: formData.image && formData.image.startsWith('http') ? formData.image : 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibG9nJTIwcG9zdHxlbnwxfHx8fDE3NTc3NDQ1NTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
         tags: formData.tags || [],
         views: editingPost?.views || 0,
         likes: editingPost?.likes || 0,
+        applause: editingPost?.applause || 0,
         comments: editingPost?.comments || 0,
         shares: editingPost?.shares || 0,
         featured: formData.featured || false,
@@ -177,15 +207,19 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
         // Update existing post
         const updatedPost = await blogService.updatePost(editingPost.id, postData)
         if (updatedPost) {
-          setBlogPosts(posts => posts.map(post => post.id === editingPost.id ? updatedPost : post))
-          setFilteredPosts(posts => posts.map(post => post.id === editingPost.id ? updatedPost : post))
+          // Reload all posts from Firestore to ensure consistency
+          const allPosts = await blogService.getAllPosts()
+          setBlogPosts(allPosts)
+          setFilteredPosts(allPosts)
         }
       } else {
         // Create new post
         const newPost = await blogService.createPost(postData)
         if (newPost) {
-          setBlogPosts(posts => [newPost, ...posts])
-          setFilteredPosts(posts => [newPost, ...posts])
+          // Reload all posts from Firestore to ensure consistency
+          const allPosts = await blogService.getAllPosts()
+          setBlogPosts(allPosts)
+          setFilteredPosts(allPosts)
         }
       }
 
@@ -228,33 +262,38 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     }))
   }
 
-  // Image upload functions
+  // Image upload functions - Convert to base64 for storage in Firestore (no Firebase Storage needed)
   const handleFileUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file')
       return
     }
 
-    if (file.size > 1 * 1024 * 1024) { // 1MB limit for Firestore
-      alert('Image size must be less than 1MB for Firestore compatibility')
+    // Limit to 500KB to stay within Firestore document size limits
+    if (file.size > 500 * 1024) {
+      alert('Image size must be less than 500KB. Please use the URL input for larger images, or compress your image first.')
       return
     }
 
     setIsUploading(true)
     
     try {
-      // For now, just use a default image URL to avoid Firestore size limits
-      // In production, you'd upload to Firebase Storage or another service
-      const defaultImageUrl = 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibG9nJTIwcG9zdHxlbnwxfHx8fDE3NTc3NDQ1NTB8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral'
-      
-      setUploadedImage(defaultImageUrl)
-      setFormData(prev => ({ ...prev, image: defaultImageUrl }))
-      setIsUploading(false)
-      
-      alert('Image uploaded successfully! (Using default image for Firestore compatibility)')
-    } catch (error) {
+      // Convert image to base64
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const base64String = e.target?.result as string
+        setUploadedImage(base64String)
+        setFormData(prev => ({ ...prev, image: base64String }))
+        setIsUploading(false)
+      }
+      reader.onerror = () => {
+        alert('Error reading file. Please try again or use the URL input instead.')
+        setIsUploading(false)
+      }
+      reader.readAsDataURL(file)
+    } catch (error: any) {
       console.error('Error uploading image:', error)
-      alert('Error uploading image. Please try again.')
+      alert('Error uploading image. Please try again or use the URL input instead.')
       setIsUploading(false)
     }
   }
@@ -296,33 +335,39 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
     }
   }
 
-  // Author image upload functions
+  // Author image upload functions - Convert to base64 for storage in Firestore (no Firebase Storage needed)
   const handleAuthorImageUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file')
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      alert('Image size must be less than 5MB')
+    // Limit to 200KB for author images
+    if (file.size > 200 * 1024) {
+      alert('Author image size must be less than 200KB. Please use the URL input for larger images, or compress your image first.')
       return
     }
 
     setIsAuthorImageUploading(true)
     
     try {
-      // Convert to base64 for demo purposes
+      // Convert image to base64
       const reader = new FileReader()
       reader.onload = (e) => {
-        const result = e.target?.result as string
-        setUploadedAuthorImage(result)
-        setFormData(prev => ({ ...prev, authorImage: result }))
+        const base64String = e.target?.result as string
+        setUploadedAuthorImage(base64String)
+        setFormData(prev => ({ ...prev, authorImage: base64String }))
+        setIsAuthorImageUploading(false)
+        console.log('Author image uploaded successfully! (Stored as base64)')
+      }
+      reader.onerror = () => {
+        alert('Error reading file. Please try again or use the URL input instead.')
         setIsAuthorImageUploading(false)
       }
       reader.readAsDataURL(file)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading author image:', error)
-      alert('Error uploading author image. Please try again.')
+      alert('Error uploading author image. Please try again or use the URL input instead.')
       setIsAuthorImageUploading(false)
     }
   }
@@ -760,13 +805,18 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                     onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="Digital Strategy">Digital Strategy</option>
-                    <option value="SEO">SEO</option>
-                    <option value="Social Media">Social Media</option>
-                    <option value="Email Marketing">Email Marketing</option>
-                    <option value="Content Marketing">Content Marketing</option>
-                    <option value="PPC">PPC</option>
-                    <option value="Brand Strategy">Brand Strategy</option>
+                    <option value="Crypto Marketing">Crypto Marketing</option>
+                    <option value="Ghostwriting">Ghostwriting</option>
+                    <option value="DeFi">DeFi</option>
+                    <option value="Web3 Gaming">Web3 Gaming</option>
+                    <option value="Gamble-Fi">Gamble-Fi</option>
+                    <option value="Crypto Infrastructure">Crypto Infrastructure</option>
+                    <option value="Presale & ICO Marketing">Presale & ICO Marketing</option>
+                    <option value="Social Media Growth">Social Media Growth</option>
+                    <option value="Funnel Optimization">Funnel Optimization</option>
+                    <option value="Web3 Strategy">Web3 Strategy</option>
+                    <option value="Thought Leadership">Thought Leadership</option>
+                    <option value="Investor Relations">Investor Relations</option>
                   </select>
                 </div>
               </div>
@@ -839,18 +889,31 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                         <p className="text-gray-600 text-sm">Uploading image...</p>
                       </div>
                     ) : uploadedAuthorImage || formData.authorImage ? (
-                      <div className="image-upload-preview relative">
-                        <ImageWithFallback
-                          src={uploadedAuthorImage || formData.authorImage || ''}
-                          alt="Author Preview"
-                          className="w-20 h-20 object-cover rounded-full mx-auto"
-                        />
-                        <button
+                      <div className="space-y-3">
+                        <div className="image-upload-preview relative inline-block">
+                          <ImageWithFallback
+                            src={uploadedAuthorImage || formData.authorImage || ''}
+                            alt="Author Preview"
+                            className="w-20 h-20 object-cover rounded-full mx-auto"
+                          />
+                          <button
+                            onClick={removeAuthorImage}
+                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors shadow-lg"
+                            title="Remove author image"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <Button
+                          type="button"
                           onClick={removeAuthorImage}
-                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                          variant="outline"
+                          size="sm"
+                          className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
                         >
-                          <Trash className="h-3 w-3" />
-                        </button>
+                          <Trash className="h-3 w-3 mr-2" />
+                          Remove Author Image
+                        </Button>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center">
@@ -885,13 +948,27 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Or enter image URL
                     </label>
-                    <input
-                      type="url"
-                      value={formData.authorImage || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, authorImage: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="https://example.com/author-photo.jpg"
-                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={formData.authorImage || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, authorImage: e.target.value }))}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="https://example.com/author-photo.jpg"
+                      />
+                      {formData.authorImage && (
+                        <Button
+                          type="button"
+                          onClick={removeAuthorImage}
+                          variant="outline"
+                          size="sm"
+                          className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 whitespace-nowrap"
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Clear
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -919,18 +996,30 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                       <p className="text-gray-600">Uploading image...</p>
                     </div>
                   ) : uploadedImage || formData.image ? (
-                    <div className="image-upload-preview relative">
-                      <ImageWithFallback
-                        src={uploadedImage || formData.image || ''}
-                        alt="Preview"
-                        className="w-full h-48 object-cover rounded-lg"
-                      />
-                      <button
+                    <div className="space-y-3">
+                      <div className="image-upload-preview relative">
+                        <ImageWithFallback
+                          src={uploadedImage || formData.image || ''}
+                          alt="Preview"
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                        <button
+                          onClick={removeImage}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-lg"
+                          title="Remove image"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <Button
+                        type="button"
                         onClick={removeImage}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        variant="outline"
+                        className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
                       >
-                        <Trash className="h-4 w-4" />
-                      </button>
+                        <Trash className="h-4 w-4 mr-2" />
+                        Remove Image
+                      </Button>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center">
@@ -946,7 +1035,7 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                         <Upload className="h-4 w-4 mr-2" />
                         Choose File
                       </Button>
-                      <p className="text-xs text-gray-500 mt-2">PNG, JPG, GIF up to 5MB</p>
+                      <p className="text-xs text-gray-500 mt-2">PNG, JPG, GIF, WEBP up to 500KB (or use URL for larger images)</p>
                     </div>
                   )}
                   
@@ -963,15 +1052,28 @@ export function AdminPage({ onPageChange }: AdminPageProps) {
                 <div className="mt-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Or enter image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="https://example.com/image.jpg"
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      value={formData.image || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="https://example.com/image.jpg"
                     />
+                    {formData.image && (
+                      <Button
+                        type="button"
+                        onClick={removeImage}
+                        variant="outline"
+                        className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 whitespace-nowrap"
+                      >
+                        <X className="h-4 w-4 mr-1" />
+                        Clear
+                      </Button>
+                    )}
                   </div>
+                </div>
               </div>
 
               {/* Tags */}

@@ -119,7 +119,9 @@ export function AdminDashboard({ onPageChange }: AdminDashboardProps) {
     try {
       const newPost = await blogService.createPost(formData)
       if (newPost) {
-        setBlogPosts([newPost, ...blogPosts])
+        // Reload all posts from Firestore to ensure consistency
+        const allPosts = await blogService.getAllPosts()
+        setBlogPosts(allPosts)
         resetForm()
         setIsCreating(false)
       }
@@ -135,7 +137,9 @@ export function AdminDashboard({ onPageChange }: AdminDashboardProps) {
     try {
       const updatedPost = await blogService.updatePost(editingPost.id, formData)
       if (updatedPost) {
-        setBlogPosts(blogPosts.map(p => p.id === editingPost.id ? updatedPost : p))
+        // Reload all posts from Firestore to ensure consistency
+        const allPosts = await blogService.getAllPosts()
+        setBlogPosts(allPosts)
         setEditingPost(null)
         resetForm()
       }
@@ -150,7 +154,9 @@ export function AdminDashboard({ onPageChange }: AdminDashboardProps) {
     try {
       const success = await blogService.deletePost(postId)
       if (success) {
-        setBlogPosts(blogPosts.filter(p => p.id !== postId))
+        // Reload all posts from Firestore to ensure consistency
+        const allPosts = await blogService.getAllPosts()
+        setBlogPosts(allPosts)
       }
     } catch (error) {
       console.error('Error deleting post:', error)

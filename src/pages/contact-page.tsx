@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { FormEvent, ChangeEvent } from 'react'
 import './contact-accordion.css'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
@@ -23,6 +23,19 @@ export function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showErrorModal, setShowErrorModal] = useState(false)
+
+  // Scroll to form if hash is present
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash === '#contact-form') {
+      setTimeout(() => {
+        const element = document.getElementById('contact-form')
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100)
+    }
+  }, [])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -194,7 +207,7 @@ export function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-20 bg-white">
+      <section id="contact-form" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Contact Form */}

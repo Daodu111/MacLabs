@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '../components/ui/button'
 import { ImageWithFallback } from '../components/figma/ImageWithFallback'
 import { Award, Users, TrendingUp, Heart } from 'lucide-react'
@@ -8,8 +8,18 @@ interface AboutPageProps {
 }
 
 export function AboutPage({ onPageChange }: AboutPageProps) {
+  const [isDesktop, setIsDesktop] = useState(false)
 
-  
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsDesktop(window.innerWidth >= 768)
+    }
+    
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    
+    return () => window.removeEventListener('resize', checkScreenSize)
+  }, [])
 
   return (
     <div className="pt-16">
@@ -114,27 +124,27 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
             </div>
 
             {/* Timeline */}
-            <div className="max-w-3xl mx-auto relative px-5">
+            <div style={{ maxWidth: '768px', margin: '0 auto', position: 'relative', padding: '0 20px' }}>
               {/* Timeline Line */}
               <div 
-                className="absolute hidden md:block"
                 style={{
+                  position: 'absolute',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   width: '2px',
                   height: '100%',
                   backgroundColor: '#e5e7eb',
-                  zIndex: 1
+                  display: isDesktop ? 'block' : 'none'
                 }}
               ></div>
 
               {/* Timeline Items */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
                 {/* Item 1 - Left */}
-                <div className="relative flex items-center">
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <div 
-                    className="absolute hidden md:block"
                     style={{
+                      position: 'absolute',
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: '16px',
@@ -142,32 +152,45 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                       backgroundColor: '#2563eb',
                       borderRadius: '50%',
                       border: '4px solid white',
-                      zIndex: 10
+                      zIndex: 10,
+                      display: isDesktop ? 'block' : 'none'
                     }}
                   ></div>
                   <div 
-                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
                     style={{
-                      marginRight: 'auto',
-                      marginLeft: 0
+                      width: isDesktop ? '41.666667%' : '100%',
+                      backgroundColor: '#f9fafb',
+                      padding: '24px',
+                      borderRadius: '8px',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                      marginRight: isDesktop ? 'auto' : '0',
+                      marginLeft: '0',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                       e.currentTarget.style.transform = 'translateY(-2px)'
                     }}
                     onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Creating crypto content since 2019</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Six years of experience navigating the evolving crypto landscape, from DeFi summer to the current market cycle.</p>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+                      Creating crypto content since 2019
+                    </h3>
+                    <p style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.625' }}>
+                      Six years of experience navigating the evolving crypto landscape, from DeFi summer to the current market cycle.
+                    </p>
                   </div>
                 </div>
 
                 {/* Item 2 - Right */}
-                <div className="relative flex items-center">
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <div 
-                    className="absolute hidden md:block"
                     style={{
+                      position: 'absolute',
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: '16px',
@@ -175,32 +198,45 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                       backgroundColor: '#2563eb',
                       borderRadius: '50%',
                       border: '4px solid white',
-                      zIndex: 10
+                      zIndex: 10,
+                      display: isDesktop ? 'block' : 'none'
                     }}
                   ></div>
                   <div 
-                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
                     style={{
-                      marginLeft: 'auto',
-                      marginRight: 0
+                      width: isDesktop ? '41.666667%' : '100%',
+                      backgroundColor: '#f9fafb',
+                      padding: '24px',
+                      borderRadius: '8px',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                      marginLeft: isDesktop ? 'auto' : '0',
+                      marginRight: '0',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                       e.currentTarget.style.transform = 'translateY(-2px)'
                     }}
                     onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Written 1,000+ presale articles across multiple market cycles</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Extensive portfolio of content helping projects communicate their value proposition to investors and communities.</p>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+                      Written 1,000+ presale articles across multiple market cycles
+                    </h3>
+                    <p style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.625' }}>
+                      Extensive portfolio of content helping projects communicate their value proposition to investors and communities.
+                    </p>
                   </div>
                 </div>
 
                 {/* Item 3 - Left */}
-                <div className="relative flex items-center">
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <div 
-                    className="absolute hidden md:block"
                     style={{
+                      position: 'absolute',
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: '16px',
@@ -208,32 +244,45 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                       backgroundColor: '#2563eb',
                       borderRadius: '50%',
                       border: '4px solid white',
-                      zIndex: 10
+                      zIndex: 10,
+                      display: isDesktop ? 'block' : 'none'
                     }}
                   ></div>
                   <div 
-                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
                     style={{
-                      marginRight: 'auto',
-                      marginLeft: 0
+                      width: isDesktop ? '41.666667%' : '100%',
+                      backgroundColor: '#f9fafb',
+                      padding: '24px',
+                      borderRadius: '8px',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                      marginRight: isDesktop ? 'auto' : '0',
+                      marginLeft: '0',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                       e.currentTarget.style.transform = 'translateY(-2px)'
                     }}
                     onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Ghostwritten for founders featured in CoinTelegraph, Yahoo Finance, The Block</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Building credible thought leadership for crypto founders in top-tier publications that matter to the industry.</p>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+                      Ghostwritten for founders featured in CoinTelegraph, Yahoo Finance, The Block
+                    </h3>
+                    <p style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.625' }}>
+                      Building credible thought leadership for crypto founders in top-tier publications that matter to the industry.
+                    </p>
                   </div>
                 </div>
 
                 {/* Item 4 - Right */}
-                <div className="relative flex items-center">
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <div 
-                    className="absolute hidden md:block"
                     style={{
+                      position: 'absolute',
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: '16px',
@@ -241,32 +290,45 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                       backgroundColor: '#2563eb',
                       borderRadius: '50%',
                       border: '4px solid white',
-                      zIndex: 10
+                      zIndex: 10,
+                      display: isDesktop ? 'block' : 'none'
                     }}
                   ></div>
                   <div 
-                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
                     style={{
-                      marginLeft: 'auto',
-                      marginRight: 0
+                      width: isDesktop ? '41.666667%' : '100%',
+                      backgroundColor: '#f9fafb',
+                      padding: '24px',
+                      borderRadius: '8px',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                      marginLeft: isDesktop ? 'auto' : '0',
+                      marginRight: '0',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                       e.currentTarget.style.transform = 'translateY(-2px)'
                     }}
                     onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Worked with projects in DeFi, GameFi, infrastructure, and specialized niches</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Deep expertise across multiple sectors, from complex DeFi protocols to emerging gaming economies and Layer 1/2 infrastructure.</p>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+                      Worked with projects in DeFi, GameFi, infrastructure, and specialized niches
+                    </h3>
+                    <p style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.625' }}>
+                      Deep expertise across multiple sectors, from complex DeFi protocols to emerging gaming economies and Layer 1/2 infrastructure.
+                    </p>
                   </div>
                 </div>
 
                 {/* Item 5 - Left */}
-                <div className="relative flex items-center">
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                   <div 
-                    className="absolute hidden md:block"
                     style={{
+                      position: 'absolute',
                       left: '50%',
                       transform: 'translateX(-50%)',
                       width: '16px',
@@ -274,24 +336,37 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
                       backgroundColor: '#2563eb',
                       borderRadius: '50%',
                       border: '4px solid white',
-                      zIndex: 10
+                      zIndex: 10,
+                      display: isDesktop ? 'block' : 'none'
                     }}
                   ></div>
                   <div 
-                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
                     style={{
-                      marginRight: 'auto',
-                      marginLeft: 0
+                      width: isDesktop ? '41.666667%' : '100%',
+                      backgroundColor: '#f9fafb',
+                      padding: '24px',
+                      borderRadius: '8px',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                      marginRight: isDesktop ? 'auto' : '0',
+                      marginLeft: '0',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                       e.currentTarget.style.transform = 'translateY(-2px)'
                     }}
                     onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Managed campaigns for projects ranging from early-stage launches to established protocols</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">Comprehensive marketing strategy and execution from token generation events to mature protocol growth initiatives.</p>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>
+                      Managed campaigns for projects ranging from early-stage launches to established protocols
+                    </h3>
+                    <p style={{ color: '#4b5563', fontSize: '14px', lineHeight: '1.625' }}>
+                      Comprehensive marketing strategy and execution from token generation events to mature protocol growth initiatives.
+                    </p>
                   </div>
                 </div>
               </div>

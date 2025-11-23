@@ -107,17 +107,200 @@ export function AboutPage({ onPageChange }: AboutPageProps) {
 
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900 mb-16 text-center">Our Experience</h2>
-            <iframe 
-              src="https://claude.site/public/artifacts/3bf3b847-e48f-41f8-9e03-8660c1dc4a7c/embed" 
-              title="Claude Artifact" 
-              width="100%" 
-              height="600" 
-              frameBorder="0" 
-              allow="clipboard-write" 
-              allowFullScreen
-            ></iframe>
+          <div className="max-w-6xl mx-auto">
+            {/* Section Header */}
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-5">Our Experience</h2>
+            </div>
+
+            {/* Timeline */}
+            <div className="max-w-3xl mx-auto relative px-5">
+              {/* Timeline Line */}
+              <div 
+                className="absolute hidden md:block"
+                style={{
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '2px',
+                  height: '100%',
+                  backgroundColor: '#e5e7eb',
+                  zIndex: 1
+                }}
+              ></div>
+
+              {/* Timeline Items */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                {/* Item 1 - Left */}
+                <div className="relative flex items-center">
+                  <div 
+                    className="absolute hidden md:block"
+                    style={{
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: '#2563eb',
+                      borderRadius: '50%',
+                      border: '4px solid white',
+                      zIndex: 10
+                    }}
+                  ></div>
+                  <div 
+                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
+                    style={{
+                      marginRight: 'auto',
+                      marginLeft: 0
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Creating crypto content since 2019</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">Six years of experience navigating the evolving crypto landscape, from DeFi summer to the current market cycle.</p>
+                  </div>
+                </div>
+
+                {/* Item 2 - Right */}
+                <div className="relative flex items-center">
+                  <div 
+                    className="absolute hidden md:block"
+                    style={{
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: '#2563eb',
+                      borderRadius: '50%',
+                      border: '4px solid white',
+                      zIndex: 10
+                    }}
+                  ></div>
+                  <div 
+                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
+                    style={{
+                      marginLeft: 'auto',
+                      marginRight: 0
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Written 1,000+ presale articles across multiple market cycles</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">Extensive portfolio of content helping projects communicate their value proposition to investors and communities.</p>
+                  </div>
+                </div>
+
+                {/* Item 3 - Left */}
+                <div className="relative flex items-center">
+                  <div 
+                    className="absolute hidden md:block"
+                    style={{
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: '#2563eb',
+                      borderRadius: '50%',
+                      border: '4px solid white',
+                      zIndex: 10
+                    }}
+                  ></div>
+                  <div 
+                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
+                    style={{
+                      marginRight: 'auto',
+                      marginLeft: 0
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Ghostwritten for founders featured in CoinTelegraph, Yahoo Finance, The Block</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">Building credible thought leadership for crypto founders in top-tier publications that matter to the industry.</p>
+                  </div>
+                </div>
+
+                {/* Item 4 - Right */}
+                <div className="relative flex items-center">
+                  <div 
+                    className="absolute hidden md:block"
+                    style={{
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: '#2563eb',
+                      borderRadius: '50%',
+                      border: '4px solid white',
+                      zIndex: 10
+                    }}
+                  ></div>
+                  <div 
+                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
+                    style={{
+                      marginLeft: 'auto',
+                      marginRight: 0
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Worked with projects in DeFi, GameFi, infrastructure, and specialized niches</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">Deep expertise across multiple sectors, from complex DeFi protocols to emerging gaming economies and Layer 1/2 infrastructure.</p>
+                  </div>
+                </div>
+
+                {/* Item 5 - Left */}
+                <div className="relative flex items-center">
+                  <div 
+                    className="absolute hidden md:block"
+                    style={{
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: '#2563eb',
+                      borderRadius: '50%',
+                      border: '4px solid white',
+                      zIndex: 10
+                    }}
+                  ></div>
+                  <div 
+                    className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-all w-full md:w-5/12"
+                    style={{
+                      marginRight: 'auto',
+                      marginLeft: 0
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Managed campaigns for projects ranging from early-stage launches to established protocols</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">Comprehensive marketing strategy and execution from token generation events to mature protocol growth initiatives.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Box */}
+            <div className="text-center mt-16 p-10 bg-gray-50 rounded-lg max-w-3xl mx-auto">
+              <p className="text-gray-600 text-lg">If you're building something in crypto and need help with content, we'd like to talk.</p>
+            </div>
           </div>
         </div>
       </section>

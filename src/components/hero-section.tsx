@@ -15,12 +15,16 @@ export function HeroSection({ onGetStarted, onSeeOurWork }: HeroSectionProps) {
           {/* Text Content */}
           <div className="lg:pr-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              Turn Your Crypto Expertise Into{' '}
-              <span className="text-blue-600">Authority & Capital</span>
+              MacLabs helps crypto founders with two specialized services:
             </h1>
+            <p className="text-xl text-gray-600 mb-4 leading-relaxed">
+              Building thought leadership and personal brands on LinkedIn.
+            </p>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              MacLabs helps Web3 founders, DeFi platforms, and crypto infrastructure tools build trust, 
-              attract investors, and scale through strategic ghostwriting and crypto marketing.
+              Running full-service presale marketing campaigns for token launches.
+            </p>
+            <p className="text-lg text-gray-500 mb-8 italic">
+              "We've worked with crypto founders featured in CoinTelegraph, Yahoo Finance, and The Block"
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
@@ -28,7 +32,7 @@ export function HeroSection({ onGetStarted, onSeeOurWork }: HeroSectionProps) {
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
               >
-                Work With Us
+                Book A Strategy Call
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
@@ -37,7 +41,7 @@ export function HeroSection({ onGetStarted, onSeeOurWork }: HeroSectionProps) {
                 className="px-8 py-3 border-gray-300 text-gray-700 hover:bg-gray-50"
                 onClick={onSeeOurWork}
               >
-                See Our Work
+                Our Services
               </Button>
             </div>
           </div>

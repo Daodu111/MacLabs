@@ -11,17 +11,17 @@ export function ServicesSection({ onPageChange }: ServicesSectionProps) {
   const services = [
     {
       icon: <PenTool className="h-8 w-8 text-green-600" />,
-      title: "Ghostwriting for Crypto Founders",
-      description: "Turn your crypto expertise into influence. We help Web3 founders, executives, and influencers build authority through strategic LinkedIn content and educational email courses that attract investors and build trust.",
+      title: "Thought Leadership & Personal Branding",
+      description: "Ghostwriting Services for Crypto Founders & Executives. We create 10-20 LinkedIn posts per month that position you as a recognized voice in your niche. Includes educational email courses, newsletter ghostwriting, voice calibration, and profile optimization.",
       image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1080&q=80",
-      features: ["LinkedIn thought leadership posts", "Educational email courses", "Newsletter ghostwriting", "Voice development & positioning", "X/Twitter thread repurposing"]
+      features: ["LinkedIn ghostwriting (10-20 posts/month)", "Educational email courses (EECs)", "Newsletter ghostwriting", "Voice calibration & positioning", "Profile optimization"]
     },
     {
       icon: <Target className="h-8 w-8 text-blue-600" />,
-      title: "Crypto Marketing & Funnels",
-      description: "Specialized marketing for Presale projects and ICOs. We create compelling promotional content, landing pages, and investor education funnels that convert cold leads into warm believers ready to invest.",
+      title: "Presale Marketing Agency",
+      description: "Full-Service Content Campaigns for Token Launches. We produce 50-100+ articles, create whitepaper & tokenomics documentation, build landing pages & conversion funnels, and distribute content across crypto media for your presale or ICO.",
       image: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=1080&q=80",
-      features: ["Presale & ICO promotional content", "High-converting landing pages", "Investor education funnels", "Email sequences for lead nurturing", "Analytics & funnel optimization"]
+      features: ["Strategic campaign planning", "High-volume article production (50-100+)", "Whitepaper & tokenomics documentation", "Landing pages & conversion funnels", "Distribution across crypto media"]
     }
   ]
 
@@ -29,10 +29,9 @@ export function ServicesSection({ onPageChange }: ServicesSectionProps) {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Core Services</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Services</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We specialize in two high-impact services for crypto and Web3 brands: strategic ghostwriting 
-            for founders raising capital, and crypto marketing for Presale and ICO projects.
+            We specialize in two distinct areas of crypto content creation.
           </p>
         </div>
 
@@ -82,7 +81,7 @@ export function ServicesSection({ onPageChange }: ServicesSectionProps) {
                     }
                   }}
                 >
-                  Learn More
+                  {index === 0 ? 'Discuss Personal Branding Strategy' : 'Discuss Presale Campaign'}
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <ImageWithFallback

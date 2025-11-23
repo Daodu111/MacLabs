@@ -5,23 +5,23 @@ export function WhyChooseSection() {
   const benefits = [
     {
       icon: <Shield className="h-12 w-12 text-blue-600" />,
-      title: "Crypto & Web3 Native Understanding",
-      description: "We don't just write about crypto—we live it. Our team trades, invests, and understands both sides of the equation, helping you communicate authentically to investors."
+      title: "Deep Crypto Expertise",
+      description: "We've been creating content for crypto projects since 2019. We understand DeFi protocols, tokenomics, governance structures, and technical architecture at a fundamental level. When you discuss liquidity pools or Layer 2 scaling solutions, we don't need explanations. This expertise allows us to create content that speaks credibly to technical audiences while remaining accessible to investors who may be newer to crypto."
     },
     {
       icon: <Target className="h-12 w-12 text-green-600" />,
-      title: "Specialized Niche Focus", 
-      description: "Web3 gaming, GambleFi, DeFi platforms, and crypto infrastructure tools. We know the sensitive industries, compliance requirements, and what resonates with your audience."
+      title: "Specialized in Complex Niches", 
+      description: "Many marketing agencies avoid technically complex or controversial crypto niches. We specialize in them. GambleFi, high-leverage DeFi, emerging blockchain infrastructure—if your project requires deep technical understanding and careful positioning, we have experience in these areas."
     },
     {
       icon: <TrendingUp className="h-12 w-12 text-purple-600" />,
-      title: "Thought Leadership Positioning",
-      description: "We transform crypto founders into recognized thought leaders by building their authority on X (Twitter) and LinkedIn. Our strategic content positions you as an expert who investors trust and follow."
+      title: "Experience Across Market Cycles",
+      description: "We've created content through bull markets, bear markets, and everything in between. This experience informs our approach to messaging. The strategies that work during periods of high retail enthusiasm differ from what resonates during more cautious market conditions. We adjust our approach based on current market sentiment and investor behavior rather than applying one-size-fits-all templates."
     },
     {
       icon: <Cog className="h-12 w-12 text-orange-600" />,
-      title: "Systems That Scale Without Chaos",
-      description: "From funnel audits to automated workflows, we build systems so your content operation runs smoothly and scales as you grow your project."
+      title: "Focus on Outcomes",
+      description: "We don't measure success by word count or number of posts published. We measure it by the outcomes you care about: follower growth, engagement rates, whitelist signups, community sentiment, and whether your content is helping you achieve your business objectives. Every strategy call, every piece of content, and every campaign decision is made with your specific goals in mind."
     }
   ]
 
@@ -32,10 +32,6 @@ export function WhyChooseSection() {
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
             Why Crypto Founders Choose MacLabs
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We're not just another marketing agency. We're crypto natives who understand the unique 
-            challenges of building trust, attracting investors, and scaling in the Web3 space.
-          </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

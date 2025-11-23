@@ -354,7 +354,7 @@ export function ContactPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 relative" style={{ background: 'linear-gradient(to bottom, #3b82f6, #2563eb, #1d4ed8)' }}>
+      <section className="py-20 bg-gradient-to-br from-blue-600 to-purple-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 pt-8">
             <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#ffffff', textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>

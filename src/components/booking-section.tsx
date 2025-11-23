@@ -22,11 +22,16 @@ export function BookingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Book Your Strategy Call Here
+            Ready to Discuss Your Content Strategy?
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Schedule a free 30-minute consultation to discuss your digital marketing goals 
-            and discover how we can help accelerate your growth.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-4">
+            Whether you need ongoing thought leadership support or a focused presale campaign, we can help.
+          </p>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-4">
+            Schedule a 30-minute strategy call to discuss your current situation and goals, which service aligns with your priorities, our approach to working together, and timeline and next steps.
+          </p>
+          <p className="text-base text-gray-500 max-w-3xl mx-auto italic">
+            No sales pressure. Just a clear conversation about whether we're a good fit.
           </p>
         </div>
 
